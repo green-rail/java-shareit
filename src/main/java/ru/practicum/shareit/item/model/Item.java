@@ -14,4 +14,5 @@ public class Item {
     String name;
     String description;
     boolean available;
+    Long requestId;
 }

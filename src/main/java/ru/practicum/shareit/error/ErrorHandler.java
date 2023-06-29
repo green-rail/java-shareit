@@ -14,22 +14,16 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import ru.practicum.shareit.error.exception.DataConflictException;
 import ru.practicum.shareit.error.exception.EntityNotFoundException;
 import ru.practicum.shareit.error.exception.InvalidEntityException;
-import ru.practicum.shareit.error.exception.ValidationException;
+import ru.practicum.shareit.item.exception.OwnerMismatchException;
+import ru.practicum.shareit.user.exception.UserNotFoundException;
 
 
 @RestControllerAdvice
 public class ErrorHandler {
 
-    //@ExceptionHandler
-    //@ResponseStatus(HttpStatus.BAD_REQUEST)
-    //public ErrorResponse handleInvalidParamException(final InvalidParamException e) {
-    //    return new ErrorResponse(String.format("Ошибка с полем \"%s\".", e.getParameter()));
-    //}
-
     @ExceptionHandler (value = {MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalidArgumentException(final MethodArgumentNotValidException e) {
-        System.out.println("Invalid argument exception : " );
         StringBuilder message = new StringBuilder("Некорректный объект: ");
         var errors = e.getAllErrors();
         for (int i = 0; i < errors.size(); i++) {
@@ -41,18 +35,15 @@ public class ErrorHandler {
         return new ErrorResponse(message.toString());
     }
 
-    @ExceptionHandler (value = {ValidationException.class,
-                                InvalidEntityException.class})
+    @ExceptionHandler (InvalidEntityException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(final Exception e) {
-        //StringBuilder message = new StringBuilder("Некорректный объект: ");
-        //var errors = e.getAllErrors();
-        //for (int i = 0; i < errors.size(); i++) {
-        //    message.append(errors.get(i).getDefaultMessage());
-        //    if (i < errors.size() - 1) {
-        //        message.append(" | ");
-        //    }
-        //}
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler(OwnerMismatchException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleOwnerMismatchException(OwnerMismatchException e) {
         return new ErrorResponse(e.getMessage());
     }
 
@@ -78,24 +69,19 @@ public class ErrorHandler {
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequest(final Exception e) {
-        return new ErrorResponse("Некорректный запрос.");
+        return new ErrorResponse("некорректный запрос");
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)
+    @ExceptionHandler({EntityNotFoundException.class, UserNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse notFoundException(final RuntimeException e) {
-        //return Map.of("Not found", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
-
-
-
-
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleThrowable(final Throwable e) {
         System.out.println(e.getClass());
-        return new ErrorResponse("Произошла непредвиденная ошибка.");
+        return new ErrorResponse("произошла непредвиденная ошибка");
     }
 }

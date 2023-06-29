@@ -1,9 +1,9 @@
 package ru.practicum.shareit.item.dto;
 
+import ru.practicum.shareit.item.exception.ItemDtoMappingException;
 import ru.practicum.shareit.item.model.Item;
 
 public class ItemDtoMapper {
-    private ItemDtoMapper() {}
 
     public static ItemDto toDto(Item item) {
         return new ItemDto(item.getId(), item.getName(), item.getDescription(), item.isAvailable());

@@ -9,4 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class BookingController {
     private final BookingService bookingService;
+
+    private void doStuff() {
+        var book = new Booking();
+    }
 }

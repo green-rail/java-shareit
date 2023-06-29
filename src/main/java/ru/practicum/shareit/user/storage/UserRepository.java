@@ -11,10 +11,12 @@ public interface UserRepository {
     User addUser(User user);
 
     User updateUser(Long id, User user);
+
     void removeById(Long id);
 
     Optional<User> getUser(Long id);
 
     boolean emailExists(String email);
+
     boolean indexExists(Long id);
 }

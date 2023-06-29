@@ -2,7 +2,6 @@ package ru.practicum.shareit.user.storage;
 
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.error.exception.DataConflictException;
-import ru.practicum.shareit.error.exception.ValidationException;
 import ru.practicum.shareit.user.User;
 
 import java.util.*;

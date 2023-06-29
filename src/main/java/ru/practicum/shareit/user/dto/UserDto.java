@@ -3,6 +3,8 @@ package ru.practicum.shareit.user.dto;
 import lombok.Value;
 
 import javax.validation.constraints.Email;
+import java.util.Optional;
+
 @Value
 public class UserDto {
     Long id;
@@ -12,7 +14,7 @@ public class UserDto {
 
     String name;
 
-    public boolean isValidForCreate() {
-        return email != null;
+    public Optional<String> userCreationErrorMessage() {
+        return Optional.ofNullable(email == null ? "некорректный пользователь: отсутствует email" : null);
     }
 }

@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.storage;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.HashMap;
@@ -15,7 +14,6 @@ public class InMemoryItemRepository implements ItemRepository {
 
     private final Map<Long, Item> items = new HashMap<>();
     private long nextId = 1L;
-
 
     @Override
     public List<Item> getAllItems() {

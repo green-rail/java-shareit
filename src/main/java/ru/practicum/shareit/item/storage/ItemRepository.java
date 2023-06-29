@@ -7,9 +7,14 @@ import java.util.Optional;
 
 public interface ItemRepository {
     List<Item> getAllItems();
+
     Item addItem(Item item);
+
     Item updateItem(Item item);
+
     Optional<Item> getItemById(Long id);
+
     List<Item> getAllForSharer(Long sharerId);
+
     List<Item> getWithMatchInDescription(String searchText);
 }
