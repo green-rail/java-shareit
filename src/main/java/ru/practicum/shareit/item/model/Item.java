@@ -6,10 +6,10 @@ import lombok.NonNull;
 @Data
 public class Item {
     @NonNull
-    private final Long id;
+    private Long id;
 
     @NonNull
-    private final Long ownerId;
+    private final Long sharerId;
 
     String name;
     String description;

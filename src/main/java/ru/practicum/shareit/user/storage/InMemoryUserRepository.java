@@ -58,4 +58,9 @@ public class InMemoryUserRepository implements UserRepository {
     public boolean emailExists(String email) {
         return users.values().stream().anyMatch(u -> u.getEmail().equals(email));
     }
+
+    @Override
+    public boolean indexExists(Long id) {
+        return users.containsKey(id);
+    }
 }

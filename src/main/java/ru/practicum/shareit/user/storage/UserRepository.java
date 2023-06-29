@@ -16,4 +16,5 @@ public interface UserRepository {
     Optional<User> getUser(Long id);
 
     boolean emailExists(String email);
+    boolean indexExists(Long id);
 }
