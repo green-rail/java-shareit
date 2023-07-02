@@ -26,13 +26,6 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
 
     @Override
-    public List<ItemDto> getAllItems() {
-        return itemRepository.getAllItems().stream()
-            .map(ItemDtoMapper::toDto)
-            .collect(Collectors.toUnmodifiableList());
-    }
-
-    @Override
     public ItemDto addItem(Long sharerId, ItemDto item) {
         if (!userRepository.indexExists(sharerId)) {
             throw new UserNotFoundException(sharerId);
@@ -80,14 +73,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> search(String searchText) {
-        if (searchText == null) {
+        if (searchText == null || searchText.isBlank()) {
             return Collections.emptyList();
         }
-        var processedSearchText = searchText.trim().toLowerCase();
-        if (processedSearchText.isEmpty()) {
-            return Collections.emptyList();
-        }
-        return itemRepository.getWithMatchInDescription(processedSearchText).stream()
+        return itemRepository.getWithMatchInDescription(searchText.trim().toLowerCase()).stream()
                 .map(ItemDtoMapper::toDto)
                 .collect(Collectors.toUnmodifiableList());
     }

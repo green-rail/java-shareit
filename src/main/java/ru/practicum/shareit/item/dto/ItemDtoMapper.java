@@ -22,11 +22,15 @@ public class ItemDtoMapper {
         if (itemDto.getAvailable() == null) {
             throw new ItemDtoMappingException("доступность предмета должна быть указана");
         }
-        var item = new Item(-1L, sharerId);
-        item.setName(itemDto.getName());
-        item.setDescription(itemDto.getDescription());
-        item.setAvailable(itemDto.getAvailable());
-        return item;
+
+        return new Item(
+                itemDto.getId(),
+                sharerId,
+                itemDto.getName(),
+                itemDto.getDescription(),
+                itemDto.getAvailable(),
+                null
+        );
     }
 
     public static Item updateItem(Item item, ItemDto update) {

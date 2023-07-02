@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ItemRepository {
-    List<Item> getAllItems();
 
     Item addItem(Item item);
 

@@ -24,10 +24,8 @@ public class InMemoryUserRepository implements UserRepository {
             .filter(u -> u.getEmail().equals(user.getEmail()))
             .findFirst();
 
-        if (matchedUser.isPresent()) {
-            if (matchedUser.get().getEmail().equals(user.getEmail())) {
-                throw new DataConflictException("email уже существует");
-            }
+        if (matchedUser.isPresent() && matchedUser.get().getEmail().equals(user.getEmail())) {
+            throw new DataConflictException("email уже существует");
         }
 
         user.setId(nextUserIndex);

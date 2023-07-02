@@ -1,18 +1,19 @@
 package ru.practicum.shareit.item.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 
 @Data
+@AllArgsConstructor
 public class Item {
-    @NonNull
     private Long id;
 
     @NonNull
     private final Long sharerId;
 
-    String name;
-    String description;
-    boolean available;
-    Long requestId;
+    private String name;
+    private String description;
+    private boolean available;
+    private Long requestId;
 }

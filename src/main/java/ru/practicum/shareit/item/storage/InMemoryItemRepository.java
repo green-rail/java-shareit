@@ -16,11 +16,6 @@ public class InMemoryItemRepository implements ItemRepository {
     private long nextId = 1L;
 
     @Override
-    public List<Item> getAllItems() {
-        return null;
-    }
-
-    @Override
     public Item addItem(Item item) {
         item.setId(nextId);
         items.put(nextId, item);
