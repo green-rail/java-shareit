@@ -1,7 +1,11 @@
 package ru.practicum.shareit.item.dto;
 
-/**
- * TODO Sprint add-controllers.
- */
+import lombok.Value;
+
+@Value
 public class ItemDto {
+    Long id;
+    String name;
+    String description;
+    Boolean available;
 }
