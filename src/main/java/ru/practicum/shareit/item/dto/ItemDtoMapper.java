@@ -1,8 +1,10 @@
 package ru.practicum.shareit.item.dto;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.practicum.shareit.item.exception.ItemDtoMappingException;
 import ru.practicum.shareit.item.model.Item;
 
+@Slf4j
 public class ItemDtoMapper {
 
     public static ItemDto toDto(Item item) {
@@ -34,9 +36,14 @@ public class ItemDtoMapper {
     }
 
     public static Item updateItem(Item item, ItemDto update) {
+        if (item.getId() == 2) {
+            System.out.println("debug");
+        }
         item.setName(update.getName() == null ? item.getName() : update.getName());
         item.setDescription(update.getDescription() == null ? item.getDescription() : update.getDescription());
         item.setAvailable(update.getAvailable() == null ? item.isAvailable() : update.getAvailable());
+        log.debug("updating an item: " + item);
+        log.debug("with values: " + update);
         return item;
     }
 }

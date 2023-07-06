@@ -27,11 +27,11 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto addItem(Long sharerId, ItemDto item) {
-        if (!userRepository.indexExists(sharerId)) {
+        if (!userRepository.existsById(sharerId)) {
             throw new UserNotFoundException(sharerId);
         }
         try {
-            return ItemDtoMapper.toDto(itemRepository.addItem(ItemDtoMapper.fromDto(sharerId, item)));
+            return ItemDtoMapper.toDto(itemRepository.save(ItemDtoMapper.fromDto(sharerId, item)));
         } catch (ItemDtoMappingException e) {
             throw new InvalidEntityException(e.getMessage());
         }
@@ -39,10 +39,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto updateItem(Long sharerId, ItemDto item, Long itemId) {
-        if (!userRepository.indexExists(sharerId)) {
+        if (!userRepository.existsById(sharerId)) {
             throw new UserNotFoundException(sharerId);
         }
-        var original = itemRepository.getItemById(itemId)
+        var original = itemRepository.findById(itemId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("предмет с id [%d] не найден", itemId)));
 
         if (!original.getSharerId().equals(sharerId)) {
@@ -50,12 +50,12 @@ public class ItemServiceImpl implements ItemService {
                     String.format("пользователь [%d] не является владельцем предмета [%d]", sharerId, itemId));
         }
 
-        return ItemDtoMapper.toDto(itemRepository.updateItem(ItemDtoMapper.updateItem(original, item)));
+        return ItemDtoMapper.toDto(itemRepository.save(ItemDtoMapper.updateItem(original, item)));
     }
 
     @Override
     public ItemDto getItemById(Long itemId) {
-        var item = itemRepository.getItemById(itemId)
+        var item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("предмет с id [%d] не найден", itemId)));
         return ItemDtoMapper.toDto(item);
@@ -63,10 +63,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> getAllForSharer(Long sharerId) {
-        if (!userRepository.indexExists(sharerId)) {
+        if (!userRepository.existsById(sharerId)) {
             throw new UserNotFoundException(sharerId);
         }
-        return itemRepository.getAllForSharer(sharerId).stream()
+        return itemRepository.findBySharerId(sharerId).stream()
                 .map(ItemDtoMapper::toDto)
                 .collect(Collectors.toUnmodifiableList());
     }
@@ -76,7 +76,8 @@ public class ItemServiceImpl implements ItemService {
         if (searchText == null || searchText.isBlank()) {
             return Collections.emptyList();
         }
-        return itemRepository.getWithMatchInDescription(searchText.trim().toLowerCase()).stream()
+        return itemRepository.findByAvailableTrueAndDescriptionContainingIgnoreCase(searchText.trim().toLowerCase())
+                .stream()
                 .map(ItemDtoMapper::toDto)
                 .collect(Collectors.toUnmodifiableList());
     }
