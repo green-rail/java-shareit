@@ -3,9 +3,11 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -39,13 +41,12 @@ public class ItemController {
                            HttpServletRequest request) {
 
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
-        return itemService.getItemById(itemId);
-
+        return itemService.getItemById(sharerId, itemId);
     }
 
     @GetMapping
     public List<ItemDto> getItemsForSharer(@RequestHeader("X-Sharer-User-Id") Long sharerId,
-                                           HttpServletRequest request) {
+                                                   HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
         return itemService.getAllForSharer(sharerId);
     }
@@ -55,4 +56,16 @@ public class ItemController {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
         return itemService.search(text);
     }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") Long sharerId,
+                                    @PathVariable Long itemId,
+                                    @Valid @RequestBody CommentDto comment,
+                                    HttpServletRequest request) {
+
+        log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
+        return itemService.addComment(sharerId, itemId, comment);
+    }
+
+
 }

@@ -34,9 +34,9 @@ public class UserServiceImpl implements UserService {
         userDto.userCreationErrorMessage().ifPresent(message -> {
             throw new InvalidEntityException(message);
         });
-        if (userDto.getEmail() != null && userRepository.existsByEmail(userDto.getEmail())) {
-            throw new DataConflictException(String.format("email %s уже существует", userDto.getEmail()));
-        }
+        //if (userDto.getEmail() != null && userRepository.existsByEmail(userDto.getEmail())) {
+        //    throw new DataConflictException(String.format("email %s уже существует", userDto.getEmail()));
+        //}
         return UserDtoMapper.toDto(userRepository.save(UserDtoMapper.fromDto(userDto)));
     }
 

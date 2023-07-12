@@ -3,10 +3,10 @@ package ru.practicum.shareit.booking;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -29,8 +29,9 @@ public class Booking {
     @JoinColumn(name = "item_id")
     private Item item;
 
-    @Column(name = "booker_id")
-    private Long bookerId;
+    @ManyToOne
+    @JoinColumn(name = "booker_id")
+    private User booker;
 
     @Enumerated(EnumType.STRING)
     @Column
