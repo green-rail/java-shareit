@@ -10,7 +10,7 @@ public class CommentDtoMapper {
     public static CommentDto toDto(Comment comment, String authorName) {
         return new CommentDto(
                 comment.getId(),
-                comment.getText(),
+                comment.getCommentText(),
                 authorName,
                 comment.getCreated());
     }

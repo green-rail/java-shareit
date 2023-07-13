@@ -22,10 +22,7 @@ import ru.practicum.shareit.user.exception.UserNotFoundException;
 import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.time.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -65,7 +62,8 @@ public class ItemServiceImpl implements ItemService {
                     String.format("пользователь [%d] не является владельцем предмета [%d]", sharerId, itemId));
         }
 
-        return ItemDtoMapper.toDto(itemRepository.save(ItemDtoMapper.updateItem(original, item)), null, null, null);
+        return ItemDtoMapper.toDto(itemRepository.save(ItemDtoMapper.updateItem(original, item)),
+                null, null, null);
     }
 
     @Override
@@ -81,26 +79,9 @@ public class ItemServiceImpl implements ItemService {
 
         if (!userId.equals(item.getSharerId())) return ItemDtoMapper.toDto(item, comments, null, null);
 
-        Instant now = LocalDateTime.now().toInstant(ZoneOffset.UTC);
+        var lastAndNextBookings = findLastAndNextBooking(item);
 
-        var bookings = bookingRepository.findByItemOrderByStartAsc(item);
-        //var l = bookings.stream().filter(b -> b.getEnd().isBefore(now) && !b.getStatus().equals(BookingStatus.REJECTED))
-        var l = bookings.stream().filter(b -> b.getStart().isBefore(now) && !b.getStatus().equals(BookingStatus.REJECTED))
-                .max(Comparator.comparing(Booking::getStart))
-                .orElse(null);
-        var n = bookings.stream().filter(b -> b.getStart().isAfter(now) && !b.getStatus().equals(BookingStatus.REJECTED))
-                .min(Comparator.comparing(Booking::getStart))
-                .orElse(null);
-        BookingDto last = null;
-        BookingDto next = null;
-        if (l != null) {
-            last = BookingDtoMapper.toDto(l, null, null);
-        }
-        if (n != null) {
-            next = BookingDtoMapper.toDto(n, null, null);
-        }
-
-        return ItemDtoMapper.toDto(item, comments, last, next);
+        return ItemDtoMapper.toDto(item, comments, lastAndNextBookings[0], lastAndNextBookings[1]);
     }
 
     @Override
@@ -110,32 +91,34 @@ public class ItemServiceImpl implements ItemService {
         }
         List<ItemDto> result = new ArrayList<>();
         for (Item item: itemRepository.findBySharerId(sharerId)) {
-
-            var bookings = bookingRepository.findByItemOrderByStartAsc(item);
-            Instant now = LocalDateTime.now().toInstant(ZoneOffset.UTC);
-            var l = bookings.stream().filter(b -> b.getStart().isBefore(now) && !b.getStatus().equals(BookingStatus.REJECTED))
-                    .max(Comparator.comparing(Booking::getStart)).orElse(null);
-            var n = bookings.stream().filter(b -> b.getStart().isAfter(now) && !b.getStatus().equals(BookingStatus.REJECTED))
-                    .min(Comparator.comparing(Booking::getStart)).orElse(null);
-            BookingDto last = null;
-            BookingDto next = null;
-            if (l != null) {
-                last = BookingDtoMapper.toDto(l, null, null);
-            }
-            if (n != null) {
-                next = BookingDtoMapper.toDto(n, null, null);
-            }
-
+            var bookings = findLastAndNextBooking(item);
             var comments = commentRepository.findByItemId(item.getId())
                     .stream()
                     .map(c -> CommentDtoMapper.toDto(c, c.getAuthor().getName()))
                     .collect(Collectors.toUnmodifiableList());
-
-            var res = ItemDtoMapper.toDto(item, comments, last, next);
-            //var res = ItemDtoMapper.toItemForOwnerDto(item, last, next, comments);
-            result.add(res);
+            result.add(ItemDtoMapper.toDto(item, comments, bookings[0], bookings[1]));
         }
         return result;
+    }
+
+    private BookingDto[] findLastAndNextBooking(Item item) {
+
+        List<Booking> bookings = bookingRepository.findByItemOrderByStartAsc(item);
+        Instant now = LocalDateTime.now().toInstant(ZoneOffset.UTC);
+
+        BookingDto last = bookings.stream()
+                .filter(b -> b.getStart().isBefore(now) && !b.getStatus().equals(BookingStatus.REJECTED))
+                .max(Comparator.comparing(Booking::getStart))
+                .map(b -> BookingDtoMapper.toDto(b, null, null))
+                .orElse(null);
+
+        BookingDto next = bookings.stream()
+                .filter(b -> b.getStart().isAfter(now) && !b.getStatus().equals(BookingStatus.REJECTED))
+                .min(Comparator.comparing(Booking::getStart))
+                .map(b -> BookingDtoMapper.toDto(b, null, null))
+                .orElse(null);
+
+        return new BookingDto[] {last, next};
     }
 
     @Override
@@ -151,15 +134,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentDto addComment(Long userId, Long itemId, CommentDto commentDto) {
-        //if (text.isBlank()) {
-        //    throw new InvalidEntityException("комментарий не может быть пустым");
-        //}
         var user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         var bookings = bookingRepository.findByBookerIdAndItemId(userId, itemId);
         boolean anyComplete = bookings.stream()
                 .anyMatch(b -> b.getEnd().isBefore(LocalDateTime.now().toInstant(ZoneOffset.UTC)));
-        //boolean anyComplete = bookings.stream().anyMatch(b -> b.get().isBefore(Instant.now()));
-        //boolean anyComplete = bookings.stream().anyMatch(b -> b.getStatus().equals(BookingStatus.APPROVED));
         if (!anyComplete) {
             throw new InvalidCommentAuthorException(
                     String.format("у пользователя [%d] нет законченной аренды предмета [%d]", userId, itemId));
@@ -167,7 +145,7 @@ public class ItemServiceImpl implements ItemService {
         var comment = new Comment();
         comment.setAuthor(user);
         comment.setItemId(itemId);
-        comment.setText(commentDto.getText());
+        comment.setCommentText(commentDto.getText());
         comment.setCreated(Instant.now());
         return CommentDtoMapper.toDto(commentRepository.save(comment), user.getName());
     }

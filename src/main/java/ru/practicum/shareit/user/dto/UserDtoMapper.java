@@ -12,7 +12,7 @@ public class UserDtoMapper {
     public static User fromDto(UserDto userDto) {
 
         return new User(
-                userDto.getId() == null ? -1L : userDto.getId(),
+                userDto.getId(),
                 userDto.getName(),
                 userDto.getEmail());
     }

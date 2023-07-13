@@ -34,8 +34,7 @@ public class ItemDtoMapper {
                 sharerId,
                 itemDto.getName(),
                 itemDto.getDescription(),
-                itemDto.getAvailable(),
-                null
+                itemDto.getAvailable()
         );
     }
 

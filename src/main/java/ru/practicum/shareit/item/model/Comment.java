@@ -19,8 +19,8 @@ public class Comment {
     @Column(name = "comment_id")
     private Long id;
 
-    @Column
-    private String text;
+    @Column(name = "comment_text", nullable = false)
+    private String commentText;
 
     @Column(name = "item_id", nullable = false)
     private Long itemId;
