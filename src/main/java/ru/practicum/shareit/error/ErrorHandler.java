@@ -14,6 +14,8 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import ru.practicum.shareit.error.exception.DataConflictException;
 import ru.practicum.shareit.error.exception.EntityNotFoundException;
 import ru.practicum.shareit.error.exception.InvalidEntityException;
+import ru.practicum.shareit.item.exception.InvalidCommentAuthorException;
+import ru.practicum.shareit.item.exception.ItemUnavailableException;
 import ru.practicum.shareit.item.exception.OwnerMismatchException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 
@@ -35,7 +37,17 @@ public class ErrorHandler {
         return new ErrorResponse(message.toString());
     }
 
-    @ExceptionHandler (InvalidEntityException.class)
+    @ExceptionHandler (MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleMethodArgumentTypeMismatch(final RuntimeException e) {
+        var ex = (MethodArgumentTypeMismatchException)e;
+        return new ErrorResponse("Unknown state: " + ex.getValue());
+    }
+
+    @ExceptionHandler (value = {
+            InvalidEntityException.class,
+            ItemUnavailableException.class,
+            InvalidCommentAuthorException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(final Exception e) {
         return new ErrorResponse(e.getMessage());
@@ -44,6 +56,12 @@ public class ErrorHandler {
     @ExceptionHandler(OwnerMismatchException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleOwnerMismatchException(OwnerMismatchException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler({EntityNotFoundException.class, UserNotFoundException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse notFoundException(final RuntimeException e) {
         return new ErrorResponse(e.getMessage());
     }
 
@@ -64,24 +82,17 @@ public class ErrorHandler {
             NoHandlerFoundException.class,
             MethodNotAllowedException.class,
             HttpRequestMethodNotSupportedException.class,
-            NumberFormatException.class,
-            MethodArgumentTypeMismatchException.class
+            NumberFormatException.class
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequest(final Exception e) {
         return new ErrorResponse("некорректный запрос");
     }
 
-    @ExceptionHandler({EntityNotFoundException.class, UserNotFoundException.class})
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse notFoundException(final RuntimeException e) {
-        return new ErrorResponse(e.getMessage());
-    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleThrowable(final Throwable e) {
-        System.out.println(e.getClass());
         return new ErrorResponse("произошла непредвиденная ошибка");
     }
 }

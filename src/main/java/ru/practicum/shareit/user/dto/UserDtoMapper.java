@@ -10,10 +10,10 @@ public class UserDtoMapper {
     }
 
     public static User fromDto(UserDto userDto) {
-        return User.builder()
-            .id(userDto.getId() == null ? -1L : userDto.getId())
-            .email(userDto.getEmail())
-            .name(userDto.getName())
-            .build();
+
+        return new User(
+                userDto.getId(),
+                userDto.getName(),
+                userDto.getEmail());
     }
 }

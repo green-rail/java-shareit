@@ -20,12 +20,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAllUsers() {
-        return userRepository.getAllUsers().stream().map(UserDtoMapper::toDto).collect(Collectors.toUnmodifiableList());
+        return userRepository.findAll().stream().map(UserDtoMapper::toDto).collect(Collectors.toUnmodifiableList());
     }
 
     @Override
     public UserDto getUser(Long id) {
-        return UserDtoMapper.toDto(userRepository.getUser(id)
+        return UserDtoMapper.toDto(userRepository.findById(id)
             .orElseThrow(() -> new UserNotFoundException(id)));
     }
 
@@ -34,17 +34,17 @@ public class UserServiceImpl implements UserService {
         userDto.userCreationErrorMessage().ifPresent(message -> {
             throw new InvalidEntityException(message);
         });
-        return UserDtoMapper.toDto(userRepository.addUser(UserDtoMapper.fromDto(userDto)));
+        return UserDtoMapper.toDto(userRepository.save(UserDtoMapper.fromDto(userDto)));
     }
 
     @Override
     public UserDto updateUser(Long id, UserDto userDto) {
 
-        var user = userRepository.getUser(id)
+        var user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
 
         if (userDto.getEmail() != null && !user.getEmail().equals(userDto.getEmail())) {
-            if (userRepository.emailExists(userDto.getEmail())) {
+            if (userRepository.existsByEmail(userDto.getEmail())) {
                 throw new DataConflictException(String.format("email %s уже существует", userDto.getEmail()));
             }
             user.setEmail(userDto.getEmail());
@@ -53,14 +53,14 @@ public class UserServiceImpl implements UserService {
             user.setName(userDto.getName());
         }
 
-        return UserDtoMapper.toDto(userRepository.updateUser(id, user));
+        return UserDtoMapper.toDto(userRepository.save(user));
     }
 
     @Override
     public void removeUser(Long id) {
-        if (userRepository.getUser(id).isEmpty()) {
+        if (!userRepository.existsById(id)) {
             throw new UserNotFoundException(id);
         }
-        userRepository.removeById(id);
+        userRepository.deleteById(id);
     }
 }

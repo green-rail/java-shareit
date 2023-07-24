@@ -1,12 +1,18 @@
 package ru.practicum.shareit.item.dto;
 
+import lombok.extern.slf4j.Slf4j;
+import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.item.exception.ItemDtoMappingException;
 import ru.practicum.shareit.item.model.Item;
 
+import java.util.List;
+
+@Slf4j
 public class ItemDtoMapper {
 
-    public static ItemDto toDto(Item item) {
-        return new ItemDto(item.getId(), item.getName(), item.getDescription(), item.isAvailable());
+    public static ItemDto toDto(Item item, List<CommentDto> comments, BookingDto last, BookingDto next) {
+        return new ItemDto(item.getId(), item.getName(),
+                item.getDescription(), item.isAvailable(),last, next, comments);
     }
 
     public  static Item fromDto(Long sharerId, ItemDto itemDto) throws ItemDtoMappingException {
@@ -28,8 +34,7 @@ public class ItemDtoMapper {
                 sharerId,
                 itemDto.getName(),
                 itemDto.getDescription(),
-                itemDto.getAvailable(),
-                null
+                itemDto.getAvailable()
         );
     }
 
@@ -37,6 +42,8 @@ public class ItemDtoMapper {
         item.setName(update.getName() == null ? item.getName() : update.getName());
         item.setDescription(update.getDescription() == null ? item.getDescription() : update.getDescription());
         item.setAvailable(update.getAvailable() == null ? item.isAvailable() : update.getAvailable());
+        log.debug("updating an item: " + item);
+        log.debug("with values: " + update);
         return item;
     }
 }
