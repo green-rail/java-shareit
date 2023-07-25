@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingStatus;
@@ -85,14 +86,15 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> getAllForSharer(Long sharerId) {
+    public List<ItemDto> getAllForSharer(Long sharerId, int from, int size) {
         if (!userRepository.existsById(sharerId)) {
             throw new UserNotFoundException(sharerId);
         }
         List<ItemDto> result = new ArrayList<>();
-        for (Item item: itemRepository.findBySharerId(sharerId)) {
+        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
+        for (Item item: itemRepository.findAllBySharerId(sharerId, page)) {
             var bookings = findLastAndNextBooking(item);
-            var comments = commentRepository.findByItemId(item.getId())
+            List<CommentDto> comments = commentRepository.findByItemId(item.getId())
                     .stream()
                     .map(c -> CommentDtoMapper.toDto(c, c.getAuthor().getName()))
                     .collect(Collectors.toUnmodifiableList());
@@ -122,11 +124,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> search(String searchText) {
+    public List<ItemDto> search(String searchText, int from, int size) {
         if (searchText == null || searchText.isBlank()) {
             return Collections.emptyList();
         }
-        return itemRepository.findByAvailableTrueAndDescriptionContainingIgnoreCase(searchText.trim().toLowerCase())
+        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
+        return itemRepository
+                .findByAvailableTrueAndDescriptionContainingIgnoreCase(searchText.trim().toLowerCase(), page)
                 .stream()
                 .map(i -> ItemDtoMapper.toDto(i, null, null, null))
                 .collect(Collectors.toUnmodifiableList());

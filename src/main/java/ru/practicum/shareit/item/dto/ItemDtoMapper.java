@@ -11,8 +11,16 @@ import java.util.List;
 public class ItemDtoMapper {
 
     public static ItemDto toDto(Item item, List<CommentDto> comments, BookingDto last, BookingDto next) {
-        return new ItemDto(item.getId(), item.getName(),
-                item.getDescription(), item.isAvailable(),last, next, comments);
+        return new ItemDto(
+                item.getId(),
+                item.getName(),
+                item.getDescription(),
+                item.isAvailable(),
+                last,
+                next,
+                comments,
+                item.getRequestId()
+        );
     }
 
     public  static Item fromDto(Long sharerId, ItemDto itemDto) throws ItemDtoMappingException {
@@ -34,7 +42,8 @@ public class ItemDtoMapper {
                 sharerId,
                 itemDto.getName(),
                 itemDto.getDescription(),
-                itemDto.getAvailable()
+                itemDto.getAvailable(),
+                itemDto.getRequestId()
         );
     }
 

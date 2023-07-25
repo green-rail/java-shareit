@@ -26,4 +26,7 @@ public class Item {
     private String description;
     @Column
     private boolean available;
+
+    @Column(name = "request_id")
+    private Long requestId;
 }

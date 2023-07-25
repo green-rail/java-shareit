@@ -46,15 +46,20 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDto> getItemsForSharer(@RequestHeader("X-Sharer-User-Id") Long sharerId,
-                                                   HttpServletRequest request) {
+                                           @RequestParam(defaultValue = "0") int from,
+                                           @RequestParam(defaultValue = "10") int size,
+                                           HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
-        return itemService.getAllForSharer(sharerId);
+        return itemService.getAllForSharer(sharerId, from, size);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItem(@RequestParam String text, HttpServletRequest request) {
+    public List<ItemDto> searchItem(@RequestParam String text,
+                                    @RequestParam(defaultValue = "0") int from,
+                                    @RequestParam(defaultValue = "10") int size,
+                                    HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
-        return itemService.search(text);
+        return itemService.search(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")
