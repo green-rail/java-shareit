@@ -46,18 +46,22 @@ public class BookingController {
     @GetMapping
     public List<BookingDto> getUserBookings(@RequestHeader("X-Sharer-User-Id") Long sharerId,
                                             @RequestParam(required = false, defaultValue = "ALL") BookingState state,
+                                            @RequestParam(defaultValue = "0") int from,
+                                            @RequestParam(defaultValue = "10") int size,
                                             HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
 
-        return bookingService.getUserBookings(sharerId, state);
+        return bookingService.getUserBookings(sharerId, state, from, size);
     }
 
     @GetMapping(value = "/owner")
     public List<BookingDto> getOwnerBookings(@RequestHeader("X-Sharer-User-Id") Long sharerId,
                                              @RequestParam(required = false, defaultValue = "ALL") BookingState state,
+                                             @RequestParam(defaultValue = "0") int from,
+                                             @RequestParam(defaultValue = "10") int size,
                                              HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
 
-        return bookingService.getOwnerBookings(sharerId, state);
+        return bookingService.getOwnerBookings(sharerId, state, from, size);
     }
 }
