@@ -8,6 +8,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoMapper;
 import ru.practicum.shareit.booking.dto.BookingDtoValidator;
 import ru.practicum.shareit.booking.storage.BookingRepository;
+import ru.practicum.shareit.common.Util;
 import ru.practicum.shareit.error.exception.EntityNotFoundException;
 import ru.practicum.shareit.error.exception.InvalidEntityException;
 import ru.practicum.shareit.item.dto.ItemDtoMapper;
@@ -104,6 +105,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> getUserBookings(Long userId, BookingState state, int from, int size) {
+        Util.checkPageRequestBoundaries(from, size);
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException(userId);
         }
@@ -148,6 +150,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDto> getOwnerBookings(Long sharerId, BookingState state, int from, int size) {
 
+        Util.checkPageRequestBoundaries(from, size);
         if (!userRepository.existsById(sharerId)) {
             throw new UserNotFoundException(sharerId);
         }

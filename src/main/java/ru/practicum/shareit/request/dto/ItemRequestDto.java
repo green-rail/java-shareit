@@ -1,16 +1,21 @@
 package ru.practicum.shareit.request.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.util.List;
 
 @Data
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class ItemRequestDto {
-    private final Long id;
-    private final String description;
-    private final String created;
-    private List<ItemRequestReplyDto> replies;
+    private Long id;
+    private String description;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
+    private Instant created;
+    private List<ItemRequestReplyDto> items;
 }

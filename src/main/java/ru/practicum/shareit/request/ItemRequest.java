@@ -2,11 +2,12 @@ package ru.practicum.shareit.request;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
+import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Data
 @Entity
@@ -26,5 +27,5 @@ public class ItemRequest {
     private Long requesterId;
 
     @Column
-    private Instant created = Instant.now();
+    private Instant created = LocalDateTime.now().toInstant(ZoneOffset.UTC);
 }

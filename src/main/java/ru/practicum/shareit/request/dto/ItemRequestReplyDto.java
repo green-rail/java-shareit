@@ -4,9 +4,9 @@ import lombok.Value;
 
 @Value
 public class ItemRequestReplyDto {
-    Long itemId;
-    String itemName;
-    String itemDescription;
+    Long id;
+    String name;
+    String description;
     Long requestId;
     boolean available;
 }

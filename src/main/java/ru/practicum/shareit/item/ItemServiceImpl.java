@@ -9,6 +9,7 @@ import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoMapper;
 import ru.practicum.shareit.booking.storage.BookingRepository;
+import ru.practicum.shareit.common.Util;
 import ru.practicum.shareit.error.exception.EntityNotFoundException;
 import ru.practicum.shareit.error.exception.InvalidEntityException;
 import ru.practicum.shareit.item.dto.*;
@@ -87,6 +88,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> getAllForSharer(Long sharerId, int from, int size) {
+        Util.checkPageRequestBoundaries(from, size);
         if (!userRepository.existsById(sharerId)) {
             throw new UserNotFoundException(sharerId);
         }
@@ -125,6 +127,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> search(String searchText, int from, int size) {
+        Util.checkPageRequestBoundaries(from, size);
         if (searchText == null || searchText.isBlank()) {
             return Collections.emptyList();
         }
