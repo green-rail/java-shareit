@@ -15,7 +15,9 @@ public class ItemRequestDto {
     private Long id;
     private String description;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
+    @JsonFormat(pattern = jsonDateTimePattern, timezone = "UTC")
     private Instant created;
     private List<ItemRequestReplyDto> items;
+
+    public static final String jsonDateTimePattern = "yyyy-MM-dd'T'HH:mm:ss";
 }
