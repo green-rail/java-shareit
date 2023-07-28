@@ -7,8 +7,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.practicum.shareit.item.ItemController;
-import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.nio.charset.StandardCharsets;
@@ -16,7 +14,6 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -71,7 +68,7 @@ class UserControllerTest {
     }
 
     @Test
-    void addUser() throws Exception{
+    void addUser() throws Exception {
         when(userService.addUser(any()))
                 .thenReturn(userDto);
 
@@ -87,7 +84,7 @@ class UserControllerTest {
     }
 
     @Test
-    void updateUser() throws Exception{
+    void updateUser() throws Exception {
         when(userService.updateUser(anyLong(), any()))
                 .thenReturn(userDto);
 

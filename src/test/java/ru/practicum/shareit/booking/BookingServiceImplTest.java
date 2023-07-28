@@ -16,13 +16,12 @@ import ru.practicum.shareit.user.exception.UserNotFoundException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-
 import java.time.Instant;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Transactional
 @SpringBootTest(
@@ -197,10 +196,10 @@ class BookingServiceImplTest {
         em.persist(booking);
 
         assertThrows(InvalidEntityException.class,
-                () -> bookingService.getUserBookings(user1.getId(), BookingState.ALL, -1, 10 ));
+                () -> bookingService.getUserBookings(user1.getId(), BookingState.ALL, -1, 10));
 
         assertThrows(UserNotFoundException.class,
-                () -> bookingService.getUserBookings(100L, BookingState.ALL, 0, 10 ));
+                () -> bookingService.getUserBookings(100L, BookingState.ALL, 0, 10));
     }
 
     @Test
@@ -221,10 +220,10 @@ class BookingServiceImplTest {
         em.persist(booking);
 
         assertThrows(InvalidEntityException.class,
-                () -> bookingService.getOwnerBookings(user1.getId(), BookingState.ALL, -1, 10 ));
+                () -> bookingService.getOwnerBookings(user1.getId(), BookingState.ALL, -1, 10));
 
         assertThrows(UserNotFoundException.class,
-                () -> bookingService.getOwnerBookings(100L, BookingState.ALL, 0, 10 ));
+                () -> bookingService.getOwnerBookings(100L, BookingState.ALL, 0, 10));
     }
 
     @Test

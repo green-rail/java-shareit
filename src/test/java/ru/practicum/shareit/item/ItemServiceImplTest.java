@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.booking.BookingService;
-import ru.practicum.shareit.booking.BookingState;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.error.exception.EntityNotFoundException;
 import ru.practicum.shareit.error.exception.InvalidEntityException;
@@ -21,8 +19,8 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 
-import javax.persistence.*;
-
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -30,7 +28,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Transactional
 @SpringBootTest(
@@ -105,7 +103,6 @@ class ItemServiceImplTest {
                 true, null, null, null, 1L);
         assertThrows(UserNotFoundException.class, () -> itemService.addItem(100L, dto));
     }
-
 
 
     @Test
@@ -183,10 +180,10 @@ class ItemServiceImplTest {
     @Test
     void getAllForSharerFail() {
         assertThrows(InvalidEntityException.class,
-                () -> itemService.getAllForSharer(user2.getId(),  -1, 10 ));
+                () -> itemService.getAllForSharer(user2.getId(), -1, 10));
 
         assertThrows(UserNotFoundException.class,
-                () -> itemService.getAllForSharer(100L, 0, 10 ));
+                () -> itemService.getAllForSharer(100L, 0, 10));
 
 
         List<ItemDto> response = itemService.getAllForSharer(user1.getId(), 0, 10);
@@ -217,7 +214,7 @@ class ItemServiceImplTest {
 
 
         assertThrows(InvalidEntityException.class,
-                () -> itemService.search("search",  -1, 10 ));
+                () -> itemService.search("search", -1, 10));
 
         List<ItemDto> response = itemService.search("item", 0, 10);
         assertThat(response, hasSize(0));
@@ -247,10 +244,10 @@ class ItemServiceImplTest {
         CommentDto commentDto = new CommentDto();
         commentDto.setText("comment text");
         assertThrows(UserNotFoundException.class,
-                () -> itemService.addComment(100L, item.getId(), commentDto ));
+                () -> itemService.addComment(100L, item.getId(), commentDto));
 
         assertThrows(EntityNotFoundException.class,
-                () -> itemService.addComment(user1.getId(), 100L, commentDto ));
+                () -> itemService.addComment(user1.getId(), 100L, commentDto));
 
         User user3 = new User();
         user3.setName("Ivan3");
@@ -258,7 +255,7 @@ class ItemServiceImplTest {
         em.persist(user3);
 
         assertThrows(InvalidCommentAuthorException.class,
-                () -> itemService.addComment(user3.getId(), item.getId(), commentDto ));
+                () -> itemService.addComment(user3.getId(), item.getId(), commentDto));
 
         CommentDto response = itemService.addComment(user1.getId(), item.getId(), commentDto);
 

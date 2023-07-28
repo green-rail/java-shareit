@@ -4,24 +4,20 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.error.exception.DataConflictException;
-import ru.practicum.shareit.item.ItemService;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
-
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Transactional
 @SpringBootTest(
@@ -58,7 +54,7 @@ class UserServiceImplTest {
 
     @Test
     void getUser() {
-        assertThrows(UserNotFoundException.class,() -> userService.getUser(100L));
+        assertThrows(UserNotFoundException.class, () -> userService.getUser(100L));
         UserDto response = userService.getUser(user1.getId());
         assertThat(response.getId(), equalTo(user1.getId()));
         assertThat(response.getName(), equalTo(user1.getName()));
@@ -85,8 +81,8 @@ class UserServiceImplTest {
     @Test
     void updateUser() {
         UserDto dto = new UserDto(null, "ivan2@email.com", null);
-        assertThrows(UserNotFoundException.class,() -> userService.updateUser(100L, dto));
-        assertThrows(DataConflictException.class,() -> userService.updateUser(user1.getId(), dto));
+        assertThrows(UserNotFoundException.class, () -> userService.updateUser(100L, dto));
+        assertThrows(DataConflictException.class, () -> userService.updateUser(user1.getId(), dto));
 
         UserDto updateDto1 = new UserDto(null, "updated@email.com", null);
         UserDto response = userService.updateUser(user1.getId(), updateDto1);

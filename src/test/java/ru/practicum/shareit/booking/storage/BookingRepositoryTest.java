@@ -1,35 +1,24 @@
 package ru.practicum.shareit.booking.storage;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -55,9 +44,9 @@ class BookingRepositoryTest {
     private Booking bookingUser2FutureApproved;
     private Booking bookingUser2FutureWaiting;
 
-    private PageRequest page = PageRequest.of(0, 10);
+    private final PageRequest page = PageRequest.of(0, 10);
 
-    private boolean setupComplete = false;
+    private final boolean setupComplete = false;
 
     @BeforeEach
     public void setup() {
@@ -202,25 +191,25 @@ class BookingRepositoryTest {
 
     @Test
     void findPastByOwner() {
-        Page<Booking> response = repository.findPastByOwner(user1.getId(), Instant.now(),  page);
+        Page<Booking> response = repository.findPastByOwner(user1.getId(), Instant.now(), page);
         assertThat(response.getTotalElements(), equalTo(2L));
     }
 
     @Test
     void findFutureByOwner() {
-        Page<Booking> response = repository.findFutureByOwner(user1.getId(), Instant.now(),  page);
+        Page<Booking> response = repository.findFutureByOwner(user1.getId(), Instant.now(), page);
         assertThat(response.getTotalElements(), equalTo(2L));
     }
 
     @Test
     void findByOwnerAndStatus() {
-        Page<Booking> response = repository.findByOwnerAndStatus(user1.getId(), BookingStatus.APPROVED,  page);
+        Page<Booking> response = repository.findByOwnerAndStatus(user1.getId(), BookingStatus.APPROVED, page);
         assertThat(response.getTotalElements(), equalTo(4L));
 
-        response = repository.findByOwnerAndStatus(user1.getId(), BookingStatus.WAITING,  page);
+        response = repository.findByOwnerAndStatus(user1.getId(), BookingStatus.WAITING, page);
         assertThat(response.getTotalElements(), equalTo(1L));
 
-       response = repository.findByOwnerAndStatus(user1.getId(), BookingStatus.REJECTED,  page);
+        response = repository.findByOwnerAndStatus(user1.getId(), BookingStatus.REJECTED, page);
         assertThat(response.getTotalElements(), equalTo(1L));
     }
 

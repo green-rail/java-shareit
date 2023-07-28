@@ -1,23 +1,20 @@
-
 package ru.practicum.shareit.request;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-
-import lombok.RequiredArgsConstructor;
 import ru.practicum.shareit.error.exception.EntityNotFoundException;
 import ru.practicum.shareit.error.exception.InvalidEntityException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import java.time.Instant;
 import java.util.List;
 
@@ -92,8 +89,8 @@ public class ItemRequestServiceImplTest {
         assertThat(requests, hasSize(requestList.size()));
         assertThat(requests.get(0).getDescription(), equalTo("Request 3"));
         assertThat(requests.get(2).getDescription(), equalTo("Request 1"));
-        for (ItemRequestDto dto: requests) {
-            assertThat(requests, hasItem( allOf(
+        for (ItemRequestDto dto : requests) {
+            assertThat(requests, hasItem(allOf(
                     hasProperty("id", notNullValue()),
                     hasProperty("description", equalTo(dto.getDescription()))
             )));
@@ -126,10 +123,10 @@ public class ItemRequestServiceImplTest {
         em.persist(item1);
         ItemRequestDto dto = service.getRequestById(user1.getId(), request.getId());
         assertThat(dto, allOf(
-                    hasProperty("id", notNullValue()),
-                    hasProperty("description", equalTo("Request")),
-                    hasProperty("created", notNullValue()),
-                    hasProperty("items", hasSize(1))
+                        hasProperty("id", notNullValue()),
+                        hasProperty("description", equalTo("Request")),
+                        hasProperty("created", notNullValue()),
+                        hasProperty("items", hasSize(1))
                 )
         );
     }
@@ -159,8 +156,8 @@ public class ItemRequestServiceImplTest {
         assertThat(requests, hasSize(requestList.size() - 1));
         assertThat(requests.get(0).getDescription(), equalTo("Request 3"));
         assertThat(requests.get(2).getDescription(), equalTo("Request 1"));
-        for (ItemRequestDto dto: requests) {
-            assertThat(requests, hasItem( allOf(
+        for (ItemRequestDto dto : requests) {
+            assertThat(requests, hasItem(allOf(
                     hasProperty("id", notNullValue()),
                     hasProperty("description", equalTo(dto.getDescription()))
             )));
