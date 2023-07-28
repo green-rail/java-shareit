@@ -12,7 +12,10 @@ import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.common.Util;
 import ru.practicum.shareit.error.exception.EntityNotFoundException;
 import ru.practicum.shareit.error.exception.InvalidEntityException;
-import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.CommentDtoMapper;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoMapper;
 import ru.practicum.shareit.item.exception.InvalidCommentAuthorException;
 import ru.practicum.shareit.item.exception.ItemDtoMappingException;
 import ru.practicum.shareit.item.exception.OwnerMismatchException;
@@ -23,8 +26,13 @@ import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 import ru.practicum.shareit.user.storage.UserRepository;
 
-import java.time.*;
-import java.util.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
