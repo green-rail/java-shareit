@@ -26,6 +26,18 @@ class BookingDtoValidatorTest {
         count = Arrays.stream(BookingDtoValidator.validate(dto).get().trim().split("\\.")).count();
         assertThat(count, equalTo(1L));
 
+        Instant before = Instant.now().minusSeconds(10);
+        dto.setStart(before);
+        dto.setEnd(after);
+        count = Arrays.stream(BookingDtoValidator.validate(dto).get().trim().split("\\.")).count();
+        assertThat(count, equalTo(1L));
+
+        dto.setEnd(before.plusSeconds(1));
+        count = Arrays.stream(BookingDtoValidator.validate(dto).get().trim().split("\\.")).count();
+        assertThat(count, equalTo(2L));
+
+
+        dto.setStart(now);
         dto.setEnd(after);
         assertThat(BookingDtoValidator.validate(dto).isEmpty(), equalTo(true));
 

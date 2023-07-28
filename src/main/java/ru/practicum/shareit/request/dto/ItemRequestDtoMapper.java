@@ -18,11 +18,4 @@ public class ItemRequestDtoMapper {
                 itemRequest.getCreated(),
                 null);
     }
-
-    public static List<ItemRequestDto> toDto(Collection<ItemRequest> itemRequests) {
-        return itemRequests.stream()
-                .map(ItemRequestDtoMapper::toDto)
-                .collect(Collectors.toUnmodifiableList());
-    }
-
 }

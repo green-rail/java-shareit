@@ -256,5 +256,20 @@ class BookingServiceImplTest {
         assertThat(response.get(0).getBookerId(), equalTo(user1.getId()));
         assertThat(response.get(0).getBooker(), notNullValue());
         assertThat(response.get(0).getItem(), notNullValue());
+
+        response = bookingService.getOwnerBookings(user2.getId(), BookingState.CURRENT, 0, 10);
+        assertThat(response, hasSize(0));
+
+        response = bookingService.getOwnerBookings(user2.getId(), BookingState.PAST, 0, 10);
+        assertThat(response, hasSize(0));
+
+        response = bookingService.getOwnerBookings(user2.getId(), BookingState.FUTURE, 0, 10);
+        assertThat(response, hasSize(1));
+
+        response = bookingService.getOwnerBookings(user2.getId(), BookingState.WAITING, 0, 10);
+        assertThat(response, hasSize(1));
+
+        response = bookingService.getOwnerBookings(user2.getId(), BookingState.REJECTED, 0, 10);
+        assertThat(response, hasSize(0));
     }
 }
