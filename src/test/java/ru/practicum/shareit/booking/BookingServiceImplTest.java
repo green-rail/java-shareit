@@ -17,6 +17,8 @@ import ru.practicum.shareit.user.exception.UserNotFoundException;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -129,8 +131,9 @@ class BookingServiceImplTest {
         Booking booking = new Booking();
         booking.setItem(itemMadeByUser2);
         booking.setBooker(user1);
-        booking.setStart(Instant.now().plusSeconds(10));
-        booking.setEnd(Instant.now().plusSeconds(1000));
+        var now = LocalDateTime.now().toInstant(ZoneOffset.UTC);
+        booking.setStart(now.plusSeconds(100));
+        booking.setEnd(now.plusSeconds(10000));
         booking.setStatus(BookingStatus.WAITING);
         return booking;
     }
@@ -217,10 +220,10 @@ class BookingServiceImplTest {
         assertThat(response, hasSize(0));
 
         response = bookingService.getUserBookings(user1.getId(), BookingState.PAST, 0, 10);
-        assertThat(response, hasSize(1));
+        assertThat(response, hasSize(0));
 
         response = bookingService.getUserBookings(user1.getId(), BookingState.FUTURE, 0, 10);
-        assertThat(response, hasSize(0));
+        assertThat(response, hasSize(1));
 
         response = bookingService.getUserBookings(user1.getId(), BookingState.WAITING, 0, 10);
         assertThat(response, hasSize(1));
