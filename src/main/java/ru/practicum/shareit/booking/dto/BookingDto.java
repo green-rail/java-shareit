@@ -17,11 +17,13 @@ public class BookingDto {
     private Long id;
     private Long itemId;
     private Long bookerId;
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
+    @JsonFormat(pattern = jsonDateTimePattern, timezone = "UTC")
     private Instant start;
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
+    @JsonFormat(pattern = jsonDateTimePattern, timezone = "UTC")
     private Instant end;
     private BookingStatus status;
     private ItemDto item;
     private UserDto booker;
+
+    public static final String jsonDateTimePattern = "yyyy-MM-dd'T'HH:mm:ss";
 }

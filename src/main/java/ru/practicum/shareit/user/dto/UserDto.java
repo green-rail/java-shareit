@@ -3,6 +3,7 @@ package ru.practicum.shareit.user.dto;
 import lombok.Value;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.util.Optional;
 
 @Value
@@ -12,6 +13,7 @@ public class UserDto {
     @Email(message = "Некорректный email")
     String email;
 
+    @NotBlank(message = "Имя не может быть пустым")
     String name;
 
     public Optional<String> userCreationErrorMessage() {

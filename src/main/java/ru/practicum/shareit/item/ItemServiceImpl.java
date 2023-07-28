@@ -142,6 +142,9 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public CommentDto addComment(Long userId, Long itemId, CommentDto commentDto) {
         var user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        if (!itemRepository.existsById(itemId)) {
+            throw new EntityNotFoundException(String.format("предмет с id [%d] не найден", itemId));
+        }
         var bookings = bookingRepository.findByBookerIdAndItemId(userId, itemId);
         boolean anyComplete = bookings.stream()
                 .anyMatch(b -> b.getEnd().isBefore(LocalDateTime.now().toInstant(ZoneOffset.UTC)));
