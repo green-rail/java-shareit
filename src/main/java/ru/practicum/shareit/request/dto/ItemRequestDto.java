@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
+
+import static ru.practicum.shareit.common.Constants.defaultJsonDateTimePattern;
 
 @Data
 @NoArgsConstructor
@@ -15,9 +17,7 @@ public class ItemRequestDto {
     private Long id;
     private String description;
 
-    @JsonFormat(pattern = jsonDateTimePattern, timezone = "UTC")
-    private Instant created;
+    @JsonFormat(pattern = defaultJsonDateTimePattern)
+    private LocalDateTime created;
     private List<ItemRequestReplyDto> items;
-
-    public static final String jsonDateTimePattern = "yyyy-MM-dd'T'HH:mm:ss";
 }

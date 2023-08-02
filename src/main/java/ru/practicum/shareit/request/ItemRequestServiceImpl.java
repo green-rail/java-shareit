@@ -5,9 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.common.Util;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.common.NormalizedPageRequest;
 import ru.practicum.shareit.error.exception.EntityNotFoundException;
 import ru.practicum.shareit.error.exception.InvalidEntityException;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoMapper;
@@ -29,6 +31,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private final ItemRepository itemRepository;
 
     @Override
+    @Transactional
     public ItemRequestDto addRequest(Long userId, ItemRequestDto requestDto) {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException(userId);
@@ -43,18 +46,30 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemRequestDto> getUserRequests(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException(userId);
         }
 
-        return itemRequestRepository.findByRequesterIdOrderByCreatedDesc(userId)
+        return itemRequestRepository.getByRequesterIdWithResponses(userId)
                 .stream()
                 .map(r -> {
                     var dto = ItemRequestDtoMapper.toDto(r);
-                    dto.setItems(getReplies(r.getId()));
+                    dto.setItems(makeRepliesFromItems(r.getResponses(), r.getId()));
                     return dto;
                 })
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    private static List<ItemRequestReplyDto> makeRepliesFromItems(List<Item> items, Long requestId) {
+        return items.stream()
+                .map(i -> new ItemRequestReplyDto(
+                        i.getId(),
+                        i.getName(),
+                        i.getDescription(),
+                        requestId,
+                        i.isAvailable()))
                 .collect(Collectors.toUnmodifiableList());
     }
 
@@ -71,31 +86,32 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemRequestDto> getAllRequests(int from, int size, Long requesterId) {
-        Util.checkPageRequestBoundaries(from, size);
-        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size,
-                Sort.by(Sort.Direction.DESC, "created"));
-        return itemRequestRepository.findAll(page)
+        PageRequest page = new NormalizedPageRequest(from, size)
+                .withSort(Sort.by(Sort.Direction.DESC, "created"));
+        return itemRequestRepository.getAllWithResponses(page)
                 .stream()
                 .filter(i -> !i.getRequesterId().equals(requesterId))
                 .map(r -> {
                     var dto = ItemRequestDtoMapper.toDto(r);
-                    dto.setItems(getReplies(r.getId()));
+                    dto.setItems(makeRepliesFromItems(r.getResponses(), r.getId()));
                     return dto;
                 })
                 .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ItemRequestDto getRequestById(Long userId, Long id) {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException(userId);
         }
-        var dto = ItemRequestDtoMapper.toDto(
-                itemRequestRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("запрос с id [%d] не найден", id)))
-        );
-        dto.setItems(getReplies(id));
+
+        ItemRequest request = itemRequestRepository.getByIdWithResponses(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("запрос с id [%d] не найден", id)));
+        ItemRequestDto dto = ItemRequestDtoMapper.toDto(request);
+        dto.setItems(makeRepliesFromItems(request.getResponses(), request.getId()));
         return dto;
     }
 }

@@ -198,9 +198,6 @@ class BookingServiceImplTest {
         Booking booking = makeBookingByUser1();
         em.persist(booking);
 
-        assertThrows(InvalidEntityException.class,
-                () -> bookingService.getUserBookings(user1.getId(), BookingState.ALL, -1, 10));
-
         assertThrows(UserNotFoundException.class,
                 () -> bookingService.getUserBookings(100L, BookingState.ALL, 0, 10));
     }
@@ -236,9 +233,6 @@ class BookingServiceImplTest {
     void getOwnerBookingsFail() {
         Booking booking = makeBookingByUser1();
         em.persist(booking);
-
-        assertThrows(InvalidEntityException.class,
-                () -> bookingService.getOwnerBookings(user1.getId(), BookingState.ALL, -1, 10));
 
         assertThrows(UserNotFoundException.class,
                 () -> bookingService.getOwnerBookings(100L, BookingState.ALL, 0, 10));

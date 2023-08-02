@@ -3,12 +3,14 @@ package ru.practicum.shareit.booking;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoMapper;
 import ru.practicum.shareit.booking.dto.BookingDtoValidator;
 import ru.practicum.shareit.booking.storage.BookingRepository;
-import ru.practicum.shareit.common.Util;
+import ru.practicum.shareit.common.NormalizedPageRequest;
 import ru.practicum.shareit.error.exception.EntityNotFoundException;
 import ru.practicum.shareit.error.exception.InvalidEntityException;
 import ru.practicum.shareit.item.dto.ItemDtoMapper;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
@@ -85,6 +88,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BookingDto getBooking(Long userId, Long bookingId) {
         var booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new EntityNotFoundException(
@@ -104,37 +108,42 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BookingDto> getUserBookings(Long userId, BookingState state, int from, int size) {
-        Util.checkPageRequestBoundaries(from, size);
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException(userId);
         }
         Page<Booking> bookings = null;
-        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
+        PageRequest page = new NormalizedPageRequest(from, size);
         var now = LocalDateTime.now().toInstant(ZoneOffset.UTC);
         switch (state) {
             case ALL:
-                bookings = bookingRepository.findByBookerIdOrderByIdDesc(userId, page);
+                bookings = bookingRepository.findByBookerId(userId,
+                        page.withSort(Sort.by(Sort.Direction.DESC, "id")));
                 break;
             case CURRENT:
-                bookings = bookingRepository.findByBookerIdAndStartBeforeAndEndAfterOrderByEndDesc(
-                        userId, now, now, page);
+                bookings = bookingRepository.findByBookerIdAndStartBeforeAndEndAfter(
+                        userId, now, now, page.withSort(Sort.by(Sort.Direction.DESC, "end")));
                 break;
             case PAST:
-                bookings = bookingRepository.findByBookerIdAndEndBeforeOrderByIdDesc(userId, now, page);
+                bookings = bookingRepository.findByBookerIdAndEndBefore(
+                        userId, now, page.withSort(Sort.by(Sort.Direction.DESC, "id")));
                 break;
             case FUTURE:
-                bookings = bookingRepository.findByBookerIdAndStartAfterOrderByIdDesc(userId, now, page);
+                bookings = bookingRepository.findByBookerIdAndStartAfter(
+                        userId, now, page.withSort(Sort.by(Sort.Direction.DESC, "id")));
                 break;
             case WAITING:
-                bookings = bookingRepository.findByBookerIdAndStatusOrderByIdDesc(
+                bookings = bookingRepository.findByBookerIdAndStatus(
                         userId,
-                        BookingStatus.WAITING, page);
+                        BookingStatus.WAITING,
+                        page.withSort(Sort.by(Sort.Direction.DESC, "id")));
                 break;
             case REJECTED:
-                bookings = bookingRepository.findByBookerIdAndStatusOrderByIdDesc(
+                bookings = bookingRepository.findByBookerIdAndStatus(
                         userId,
-                        BookingStatus.REJECTED, page);
+                        BookingStatus.REJECTED,
+                        page.withSort(Sort.by(Sort.Direction.DESC, "id")));
                 break;
         }
 
@@ -148,15 +157,15 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BookingDto> getOwnerBookings(Long sharerId, BookingState state, int from, int size) {
 
-        Util.checkPageRequestBoundaries(from, size);
         if (!userRepository.existsById(sharerId)) {
             throw new UserNotFoundException(sharerId);
         }
 
         Page<Booking> bookings = null;
-        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
+        PageRequest page = new NormalizedPageRequest(from, size);
         var now = LocalDateTime.now().toInstant(ZoneOffset.UTC);
         switch (state) {
             case ALL:
@@ -179,7 +188,6 @@ public class BookingServiceImpl implements BookingService {
                 break;
         }
 
-
         return  bookings.stream()
                 .map(booking -> BookingDtoMapper.toDto(
                         booking,
@@ -187,6 +195,4 @@ public class BookingServiceImpl implements BookingService {
                         UserDtoMapper.toDto(booking.getBooker())))
                 .collect(Collectors.toUnmodifiableList());
     }
-
-
 }

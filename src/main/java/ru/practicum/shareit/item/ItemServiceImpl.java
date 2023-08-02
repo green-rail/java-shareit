@@ -4,12 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoMapper;
 import ru.practicum.shareit.booking.storage.BookingRepository;
-import ru.practicum.shareit.common.Util;
+import ru.practicum.shareit.common.NormalizedPageRequest;
 import ru.practicum.shareit.error.exception.EntityNotFoundException;
 import ru.practicum.shareit.error.exception.InvalidEntityException;
 import ru.practicum.shareit.item.dto.CommentDto;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
@@ -77,6 +79,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ItemDto getItemById(Long userId, Long itemId) {
         var item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new EntityNotFoundException(
@@ -95,13 +98,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemDto> getAllForSharer(Long sharerId, int from, int size) {
-        Util.checkPageRequestBoundaries(from, size);
         if (!userRepository.existsById(sharerId)) {
             throw new UserNotFoundException(sharerId);
         }
         List<ItemDto> result = new ArrayList<>();
-        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
+        PageRequest page = new NormalizedPageRequest(from, size);
         for (Item item: itemRepository.findAllBySharerId(sharerId, page)) {
             var bookings = findLastAndNextBooking(item);
             List<CommentDto> comments = commentRepository.findByItemId(item.getId())
@@ -113,6 +116,7 @@ public class ItemServiceImpl implements ItemService {
         return result;
     }
 
+    @Transactional(readOnly = true)
     private BookingDto[] findLastAndNextBooking(Item item) {
 
         List<Booking> bookings = bookingRepository.findByItemOrderByStartAsc(item);
@@ -134,12 +138,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemDto> search(String searchText, int from, int size) {
-        Util.checkPageRequestBoundaries(from, size);
         if (searchText == null || searchText.isBlank()) {
             return Collections.emptyList();
         }
-        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
+        PageRequest page = new NormalizedPageRequest(from, size);
         return itemRepository
                 .findByAvailableTrueAndDescriptionContainingIgnoreCase(searchText.trim().toLowerCase(), page)
                 .stream()
@@ -164,7 +168,6 @@ public class ItemServiceImpl implements ItemService {
         comment.setAuthor(user);
         comment.setItemId(itemId);
         comment.setCommentText(commentDto.getText());
-        comment.setCreated(Instant.now());
         return CommentDtoMapper.toDto(commentRepository.save(comment), user.getName());
     }
 }

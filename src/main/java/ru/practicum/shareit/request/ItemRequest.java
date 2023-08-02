@@ -1,17 +1,21 @@
 package ru.practicum.shareit.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import ru.practicum.shareit.item.model.Item;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
 @Table(name = "requests")
 @NoArgsConstructor
+@AllArgsConstructor
 public class ItemRequest {
 
     @Id
@@ -26,5 +30,9 @@ public class ItemRequest {
     private Long requesterId;
 
     @Column
-    private Instant created = LocalDateTime.now().toInstant(ZoneOffset.UTC);
+    @CreationTimestamp
+    private Instant created;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "requestId")
+    private List<Item> responses = new ArrayList<>();
 }

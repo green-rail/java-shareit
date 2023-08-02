@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.item.model.Item;
@@ -12,57 +13,63 @@ import java.time.Instant;
 import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
-    Page<Booking> findByBookerIdOrderByIdDesc(Long bookerId, Pageable page);
 
-    Page<Booking> findByBookerIdAndStatusOrderByIdDesc(Long bookerId, BookingStatus status, Pageable page);
+    Page<Booking> findByBookerId(Long bookerId, Pageable page);
 
-    Page<Booking> findByBookerIdAndStartBeforeAndEndAfterOrderByEndDesc(Long bookerId, Instant now, Instant after, Pageable page);
+    Page<Booking> findByBookerIdAndStatus(Long bookerId, BookingStatus status, Pageable page);
 
-    Page<Booking> findByBookerIdAndEndBeforeOrderByIdDesc(Long bookerId, Instant now, Pageable page);
+    Page<Booking> findByBookerIdAndStartBeforeAndEndAfter(Long bookerId, Instant now, Instant after, Pageable page);
 
-    Page<Booking> findByBookerIdAndStartAfterOrderByIdDesc(Long bookerId, Instant now, Pageable page);
+    Page<Booking> findByBookerIdAndEndBefore(Long bookerId, Instant now, Pageable page);
+
+    Page<Booking> findByBookerIdAndStartAfter(Long bookerId, Instant now, Pageable page);
 
     List<Booking> findByBookerIdAndItemId(Long bookerId, Long itemId);
 
     @Query("select b " +
             "from Booking b " +
             "JOIN b.item it " +
-            "where it.sharerId = ?1 " +
+            "where it.sharerId = :ownerId " +
             "order by b.id desc")
-    Page<Booking> findAllByOwner(Long ownerId, Pageable page);
+    Page<Booking> findAllByOwner(@Param("ownerId") Long ownerId, Pageable page);
 
     @Query("select b " +
             "from Booking b " +
             "JOIN b.item it " +
-            "where it.sharerId = ?1 " +
-            "and b.start < ?2 " +
-            "and b.end > ?3 " +
+            "where it.sharerId = :ownerId " +
+            "and b.start < :start " +
+            "and b.end > :end " +
             "order by b.id desc")
-    Page<Booking> findCurrentByOwner(Long ownerId, Instant before, Instant after, Pageable page);
+    Page<Booking> findCurrentByOwner(@Param("ownerId") Long ownerId,
+                                     @Param("start") Instant before,
+                                     @Param("end") Instant after, Pageable page);
 
     @Query("select b " +
             "from Booking b " +
             "JOIN b.item it " +
-            "where it.sharerId = ?1 " +
-            "and b.end < ?2 " +
+            "where it.sharerId = :ownerId " +
+            "and b.end < :after " +
             "order by b.id desc")
-    Page<Booking> findPastByOwner(Long ownerId, Instant after, Pageable page);
+    Page<Booking> findPastByOwner(@Param("ownerId") Long ownerId,
+                                  @Param("after") Instant after, Pageable page);
 
     @Query("select b " +
             "from Booking b " +
             "JOIN b.item it " +
-            "where it.sharerId = ?1 " +
-            "and b.start > ?2 " +
+            "where it.sharerId = :ownerId " +
+            "and b.start > :start " +
             "order by b.id desc")
-    Page<Booking> findFutureByOwner(Long ownerId, Instant now, Pageable page);
+    Page<Booking> findFutureByOwner(@Param("ownerId") Long ownerId,
+                                    @Param("start") Instant now, Pageable page);
 
     @Query("select b " +
             "from Booking b " +
             "JOIN b.item it " +
-            "where it.sharerId = ?1 " +
-            "and b.status = ?2 " +
+            "where it.sharerId = :ownerId " +
+            "and b.status = :status " +
             "order by b.id desc")
-    Page<Booking> findByOwnerAndStatus(Long ownerId, BookingStatus status, Pageable page);
+    Page<Booking> findByOwnerAndStatus(@Param("ownerId") Long ownerId,
+                                       @Param("status") BookingStatus status, Pageable page);
 
     List<Booking> findByItemOrderByStartAsc(Item item);
 

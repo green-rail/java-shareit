@@ -15,22 +15,24 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserDto> getAllUsers() {
         return userRepository.findAll().stream().map(UserDtoMapper::toDto).collect(Collectors.toUnmodifiableList());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDto getUser(Long id) {
         return UserDtoMapper.toDto(userRepository.findById(id)
             .orElseThrow(() -> new UserNotFoundException(id)));
     }
 
-    @Transactional
     @Override
     public UserDto addUser(UserDto userDto) {
         userDto.userCreationErrorMessage().ifPresent(message -> {

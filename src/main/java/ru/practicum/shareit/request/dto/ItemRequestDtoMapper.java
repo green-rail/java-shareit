@@ -1,17 +1,18 @@
 package ru.practicum.shareit.request.dto;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.request.ItemRequest;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+import java.time.ZoneId;
+
+@UtilityClass
 public class ItemRequestDtoMapper {
 
-    public static ItemRequestDto toDto(ItemRequest itemRequest) {
+    public ItemRequestDto toDto(ItemRequest itemRequest) {
         return new ItemRequestDto(
                 itemRequest.getId(),
                 itemRequest.getDescription(),
-                itemRequest.getCreated(),
+                itemRequest.getCreated().atZone(ZoneId.systemDefault()).toLocalDateTime(),
                 null);
     }
 }

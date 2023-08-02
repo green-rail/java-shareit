@@ -71,7 +71,6 @@ class ItemServiceImplTest {
         comment.setCommentText("comment");
         comment.setItemId(item.getId());
         comment.setAuthor(user1);
-        comment.setCreated(Instant.now());
         em.persist(comment);
 
         Instant now = LocalDateTime.now().toInstant(ZoneOffset.UTC);
@@ -179,9 +178,6 @@ class ItemServiceImplTest {
 
     @Test
     void getAllForSharerFail() {
-        assertThrows(InvalidEntityException.class,
-                () -> itemService.getAllForSharer(user2.getId(), -1, 10));
-
         assertThrows(UserNotFoundException.class,
                 () -> itemService.getAllForSharer(100L, 0, 10));
 
@@ -211,10 +207,6 @@ class ItemServiceImplTest {
         itemToFind.setAvailable(false);
         itemToFind.setSharerId(user2.getId());
         em.persist(item);
-
-
-        assertThrows(InvalidEntityException.class,
-                () -> itemService.search("search", -1, 10));
 
         List<ItemDto> response = itemService.search("item", 0, 10);
         assertThat(response, hasSize(0));

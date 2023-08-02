@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.item.model.Item;
@@ -45,15 +46,11 @@ class BookingRepositoryTest {
     private Booking bookingUser2FutureWaiting;
 
     private final PageRequest page = PageRequest.of(0, 10);
-
-    private final boolean setupComplete = false;
+    private final PageRequest pageOrderByIdDesc = PageRequest.of(0, 10)
+            .withSort(Sort.by(Sort.Direction.DESC, "id"));
 
     @BeforeEach
     public void setup() {
-        //if (setupComplete) {
-        //    return;
-        //}
-        //setupComplete = true;
 
         user1 = new User();
         user1.setName("Ivan");
@@ -128,7 +125,7 @@ class BookingRepositoryTest {
 
     @Test
     void findByBookerIdOrderByIdDesc() {
-        Page<Booking> response = repository.findByBookerIdOrderByIdDesc(user2.getId(), page);
+        Page<Booking> response = repository.findByBookerId(user2.getId(), pageOrderByIdDesc);
 
         assertThat(response.getTotalElements(), equalTo(5L));
     }
@@ -136,34 +133,36 @@ class BookingRepositoryTest {
     @Test
     void findByBookerIdAndStatusOrderByIdDesc() {
         Page<Booking> response = repository
-                .findByBookerIdAndStatusOrderByIdDesc(user2.getId(), BookingStatus.APPROVED, page);
+                .findByBookerIdAndStatus(user2.getId(), BookingStatus.APPROVED, pageOrderByIdDesc);
         assertThat(response.getTotalElements(), equalTo(3L));
 
-        response = repository.findByBookerIdAndStatusOrderByIdDesc(user2.getId(), BookingStatus.REJECTED, page);
+        response = repository.findByBookerIdAndStatus(user2.getId(), BookingStatus.REJECTED, pageOrderByIdDesc);
         assertThat(response.getTotalElements(), equalTo(1L));
 
-        response = repository.findByBookerIdAndStatusOrderByIdDesc(user2.getId(), BookingStatus.WAITING, page);
+        response = repository.findByBookerIdAndStatus(user2.getId(), BookingStatus.WAITING, pageOrderByIdDesc);
         assertThat(response.getTotalElements(), equalTo(1L));
     }
 
     @Test
     void findByBookerIdAndStartBeforeAndEndAfterOrderByEndDesc() {
         Page<Booking> response = repository
-                .findByBookerIdAndStartBeforeAndEndAfterOrderByEndDesc(user2.getId(), Instant.now(), Instant.now(), page);
+                .findByBookerIdAndStartBeforeAndEndAfter(
+                        user2.getId(), Instant.now(), Instant.now(),
+                        page.withSort(Sort.by(Sort.Direction.DESC, "end")));
         assertThat(response.getTotalElements(), equalTo(2L));
     }
 
     @Test
     void findByBookerIdAndEndBeforeOrderByIdDesc() {
         Page<Booking> response = repository
-                .findByBookerIdAndEndBeforeOrderByIdDesc(user2.getId(), Instant.now(), page);
+                .findByBookerIdAndEndBefore(user2.getId(), Instant.now(), pageOrderByIdDesc);
         assertThat(response.getTotalElements(), equalTo(1L));
     }
 
     @Test
     void findByBookerIdAndStartAfterOrderByIdDesc() {
         Page<Booking> response = repository
-                .findByBookerIdAndStartAfterOrderByIdDesc(user2.getId(), Instant.now(), page);
+                .findByBookerIdAndStartAfter(user2.getId(), Instant.now(), pageOrderByIdDesc);
         assertThat(response.getTotalElements(), equalTo(2L));
     }
 

@@ -15,6 +15,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static ru.practicum.shareit.common.Constants.defaultJsonDateTimePattern;
 
 
 @JsonTest
@@ -27,7 +28,7 @@ class BookingDtoJsonTest {
     void bookingDtoJsonTest() throws IOException {
 
         var formatter = DateTimeFormatter
-                .ofPattern(BookingDto.jsonDateTimePattern)
+                .ofPattern(defaultJsonDateTimePattern)
                 .withZone(ZoneOffset.UTC);
         var now = Instant.now();
 

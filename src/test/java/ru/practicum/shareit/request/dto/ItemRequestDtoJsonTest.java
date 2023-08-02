@@ -7,12 +7,13 @@ import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.json.JsonContent;
 
 import java.io.IOException;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static ru.practicum.shareit.common.Constants.defaultJsonDateTimePattern;
 
 
 @JsonTest
@@ -24,9 +25,9 @@ class ItemRequestDtoJsonTest {
     void testItemRequestDto() throws IOException {
 
         var formatter = DateTimeFormatter
-                .ofPattern(ItemRequestDto.jsonDateTimePattern)
+                .ofPattern(defaultJsonDateTimePattern)
                 .withZone(ZoneOffset.UTC);
-        var now = Instant.now();
+        var now = LocalDateTime.now();
 
         ItemRequestDto dto = new ItemRequestDto(
                 1L,
@@ -45,8 +46,5 @@ class ItemRequestDtoJsonTest {
         assertThat(result).extractingJsonPathStringValue("$.created")
                 .isEqualTo(formatter.format(now));
         assertThat(result).extractingJsonPathArrayValue("$.items").hasSize(1);
-
     }
-
-
 }
