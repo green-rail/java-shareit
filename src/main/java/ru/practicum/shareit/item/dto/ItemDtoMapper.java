@@ -1,21 +1,29 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.item.exception.ItemDtoMappingException;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
 
-@Slf4j
+@UtilityClass
 public class ItemDtoMapper {
 
-    public static ItemDto toDto(Item item, List<CommentDto> comments, BookingDto last, BookingDto next) {
-        return new ItemDto(item.getId(), item.getName(),
-                item.getDescription(), item.isAvailable(),last, next, comments);
+    public ItemDto toDto(Item item, List<CommentDto> comments, BookingDto last, BookingDto next) {
+        return new ItemDto(
+                item.getId(),
+                item.getName(),
+                item.getDescription(),
+                item.isAvailable(),
+                last,
+                next,
+                comments,
+                item.getRequestId()
+        );
     }
 
-    public  static Item fromDto(Long sharerId, ItemDto itemDto) throws ItemDtoMappingException {
+    public Item fromDto(Long sharerId, ItemDto itemDto) throws ItemDtoMappingException {
         if (sharerId == null || sharerId < 0) {
             throw new ItemDtoMappingException("неверный индекс владельца");
         }
@@ -34,16 +42,15 @@ public class ItemDtoMapper {
                 sharerId,
                 itemDto.getName(),
                 itemDto.getDescription(),
-                itemDto.getAvailable()
+                itemDto.getAvailable(),
+                itemDto.getRequestId()
         );
     }
 
-    public static Item updateItem(Item item, ItemDto update) {
+    public Item updateItem(Item item, ItemDto update) {
         item.setName(update.getName() == null ? item.getName() : update.getName());
         item.setDescription(update.getDescription() == null ? item.getDescription() : update.getDescription());
         item.setAvailable(update.getAvailable() == null ? item.isAvailable() : update.getAvailable());
-        log.debug("updating an item: " + item);
-        log.debug("with values: " + update);
         return item;
     }
 }

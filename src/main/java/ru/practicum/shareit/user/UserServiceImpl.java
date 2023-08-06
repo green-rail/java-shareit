@@ -2,6 +2,7 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.error.exception.DataConflictException;
 import ru.practicum.shareit.error.exception.InvalidEntityException;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -14,16 +15,19 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserDto> getAllUsers() {
         return userRepository.findAll().stream().map(UserDtoMapper::toDto).collect(Collectors.toUnmodifiableList());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDto getUser(Long id) {
         return UserDtoMapper.toDto(userRepository.findById(id)
             .orElseThrow(() -> new UserNotFoundException(id)));
@@ -34,7 +38,11 @@ public class UserServiceImpl implements UserService {
         userDto.userCreationErrorMessage().ifPresent(message -> {
             throw new InvalidEntityException(message);
         });
-        return UserDtoMapper.toDto(userRepository.save(UserDtoMapper.fromDto(userDto)));
+        try {
+            return UserDtoMapper.toDto(userRepository.save(UserDtoMapper.fromDto(userDto)));
+        } catch (Exception e) {
+            throw new DataConflictException("email уже существует");
+        }
     }
 
     @Override
