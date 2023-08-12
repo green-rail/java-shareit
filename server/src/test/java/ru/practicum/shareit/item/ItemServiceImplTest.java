@@ -21,9 +21,7 @@ import ru.practicum.shareit.user.exception.UserNotFoundException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;

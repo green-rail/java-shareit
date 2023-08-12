@@ -27,7 +27,6 @@ import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 import ru.practicum.shareit.user.storage.UserRepository;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -120,9 +119,7 @@ public class ItemServiceImpl implements ItemService {
     private BookingDto[] findLastAndNextBooking(Item item) {
 
         List<Booking> bookings = bookingRepository.findByItemOrderByStartAsc(item);
-        Instant now_ = Instant.now();
-        System.out.println("\n\n\n-------------------NOW: " + now_);
-        System.out.println("-NOW from date time to inst: " + LocalDateTime.now().toInstant(ZoneOffset.UTC));
+        System.out.println("---NOW from date time to inst: " + LocalDateTime.now().toInstant(ZoneOffset.UTC));
         System.out.println("-----------NOW from date time: " + LocalDateTime.now());
         bookings.forEach(b -> System.out.println(b.getStart()));
         //Instant now = LocalDateTime.now().toInstant(ZoneOffset.UTC);

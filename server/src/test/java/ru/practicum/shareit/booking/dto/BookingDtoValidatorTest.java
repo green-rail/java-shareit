@@ -2,7 +2,6 @@ package ru.practicum.shareit.booking.dto;
 
 import org.junit.jupiter.api.Test;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 

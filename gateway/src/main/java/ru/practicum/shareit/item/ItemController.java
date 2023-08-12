@@ -6,16 +6,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
-
-import java.util.List;
 
 import static ru.practicum.shareit.common.Defaults.X_SHARER_HEADER_NAME;
 
@@ -29,8 +25,8 @@ public class ItemController {
     private final ItemClient itemClient;
 
     @PostMapping
-    public ResponseEntity<Object> addItem( @RequestHeader(X_SHARER_HEADER_NAME) long userId,
-                                           @RequestBody @Valid ItemDto itemDto) {
+    public ResponseEntity<Object> addItem(@RequestHeader(X_SHARER_HEADER_NAME) long userId,
+                                          @RequestBody @Valid ItemDto itemDto) {
         log.info("Add item item={}, userId={}", itemDto, userId);
         return itemClient.addItem(userId, itemDto);
     }

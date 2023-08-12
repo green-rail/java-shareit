@@ -5,10 +5,6 @@ import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.dto.UserDto;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.TimeZone;
-
 @UtilityClass
 public class BookingDtoMapper {
     public BookingDto toDto(Booking booking, ItemDto itemDto, UserDto userDto) {
