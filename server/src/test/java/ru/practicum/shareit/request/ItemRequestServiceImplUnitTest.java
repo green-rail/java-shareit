@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import ru.practicum.shareit.error.exception.EntityNotFoundException;
-import ru.practicum.shareit.error.exception.InvalidEntityException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -68,10 +67,8 @@ class ItemRequestServiceImplUnitTest {
         Mockito.when(userRepository.existsById(anyLong())).thenReturn(false);
         assertThrows(UserNotFoundException.class, () -> itemRequestService.addRequest(100L, dto));
 
-        Mockito.when(userRepository.existsById(anyLong())).thenReturn(true);
-        assertThrows(InvalidEntityException.class, () -> itemRequestService.addRequest(1L, dto));
-
         Mockito.when(itemRequestRepository.save(any())).thenReturn(request);
+        Mockito.when(userRepository.existsById(anyLong())).thenReturn(true);
         ItemRequestDto validDto = new ItemRequestDto(request.getId(), request.getDescription(), LocalDateTime.now(), null);
         ItemRequestDto response = itemRequestService.addRequest(user.getId(), validDto);
 

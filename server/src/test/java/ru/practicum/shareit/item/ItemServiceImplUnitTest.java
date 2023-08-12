@@ -10,7 +10,6 @@ import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.error.exception.EntityNotFoundException;
-import ru.practicum.shareit.error.exception.InvalidEntityException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.exception.InvalidCommentAuthorException;
@@ -118,9 +117,6 @@ class ItemServiceImplUnitTest {
                 null,
                 null
         );
-
-        Mockito.when(userRepository.existsById(anyLong())).thenReturn(false);
-        assertThrows(InvalidEntityException.class, () -> itemService.addItem(1L, dto));
 
         ItemDto validDto = new ItemDto(
                 1L,

@@ -2,15 +2,11 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 import static ru.practicum.shareit.common.Constants.userIdRequestHeaderName;
@@ -19,7 +15,6 @@ import static ru.practicum.shareit.common.Constants.userIdRequestHeaderName;
 @RequestMapping("/items")
 @RequiredArgsConstructor
 @Slf4j
-@Validated
 public class ItemController {
 
     private final ItemService itemService;
@@ -52,8 +47,8 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDto> getItemsForSharer(@RequestHeader(userIdRequestHeaderName) Long sharerId,
-                                           @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-                                           @RequestParam(defaultValue = "10") @Positive int size,
+                                           @RequestParam(defaultValue = "0") int from,
+                                           @RequestParam(defaultValue = "10") int size,
                                            HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
         return itemService.getAllForSharer(sharerId, from, size);
@@ -61,8 +56,8 @@ public class ItemController {
 
     @GetMapping("/search")
     public List<ItemDto> searchItem(@RequestParam String text,
-                                    @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-                                    @RequestParam(defaultValue = "10") @Positive int size,
+                                    @RequestParam(defaultValue = "0") int from,
+                                    @RequestParam(defaultValue = "10") int size,
                                     HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
         return itemService.search(text, from, size);
@@ -71,12 +66,10 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public CommentDto addComment(@RequestHeader(userIdRequestHeaderName) Long sharerId,
                                  @PathVariable Long itemId,
-                                 @Valid @RequestBody CommentDto comment,
+                                 @RequestBody CommentDto comment,
                                  HttpServletRequest request) {
 
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
         return itemService.addComment(sharerId, itemId, comment);
     }
-
-
 }

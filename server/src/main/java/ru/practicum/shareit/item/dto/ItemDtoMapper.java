@@ -24,19 +24,6 @@ public class ItemDtoMapper {
     }
 
     public Item fromDto(Long sharerId, ItemDto itemDto) throws ItemDtoMappingException {
-        if (sharerId == null || sharerId < 0) {
-            throw new ItemDtoMappingException("неверный индекс владельца");
-        }
-        if (itemDto.getName() == null || itemDto.getName().isBlank()) {
-            throw new ItemDtoMappingException("имя предмета не может быть пустым");
-        }
-        if (itemDto.getDescription() == null || itemDto.getDescription().isBlank()) {
-            throw new ItemDtoMappingException("название предмета не может быть пустым");
-        }
-        if (itemDto.getAvailable() == null) {
-            throw new ItemDtoMappingException("доступность предмета должна быть указана");
-        }
-
         return new Item(
                 itemDto.getId(),
                 sharerId,

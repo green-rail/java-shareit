@@ -19,10 +19,6 @@ public class BookingDto {
     private Long id;
     private Long itemId;
     private Long bookerId;
-    //@JsonFormat(pattern = defaultJsonDateTimePattern, timezone = "UTC")
-    //private Instant start;
-    //@JsonFormat(pattern = defaultJsonDateTimePattern, timezone = "UTC")
-    //private Instant end;
     @JsonFormat(pattern = defaultJsonDateTimePattern)
     private LocalDateTime start;
     @JsonFormat(pattern = defaultJsonDateTimePattern)

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoMapper;
-import ru.practicum.shareit.booking.dto.BookingDtoValidator;
 import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.common.NormalizedPageRequest;
 import ru.practicum.shareit.error.exception.EntityNotFoundException;
@@ -52,23 +51,11 @@ public class BookingServiceImpl implements BookingService {
             throw new EntityNotFoundException("владелец не может бронировать предмет");
         }
 
-        BookingDtoValidator.validate(bookingDto).ifPresent(s -> {
-            throw new InvalidEntityException(s); });
-
         var booking = BookingDtoMapper.fromDto(bookingDto);
         booking.setStatus(BookingStatus.WAITING);
         booking.setItem(item);
         booking.setBooker(booker);
-        System.out.println("/////////////");
-        System.out.println("booking saving bookingDto: " + bookingDto.getStart());
-        System.out.println("booking saving booking: " + booking.getStart());
-        var saved = bookingRepository.save(booking);
-        System.out.println("booking saving start: " + saved.getStart());
-        System.out.println("||||||||||");
-
-
-        //return BookingDtoMapper.toDto(bookingRepository.save(booking),
-        return BookingDtoMapper.toDto(saved,
+        return BookingDtoMapper.toDto(bookingRepository.save(booking),
                 ItemDtoMapper.toDto(item, null, null, null),
                 UserDtoMapper.toDto(booker));
     }
@@ -123,9 +110,7 @@ public class BookingServiceImpl implements BookingService {
         }
         Page<Booking> bookings = null;
         PageRequest page = new NormalizedPageRequest(from, size);
-        //var now = LocalDateTime.now().toInstant(ZoneOffset.UTC);
         var now = LocalDateTime.now();
-        //var now = Instant.now();
         switch (state) {
             case ALL:
                 bookings = bookingRepository.findByBookerId(userId,
@@ -176,9 +161,7 @@ public class BookingServiceImpl implements BookingService {
 
         Page<Booking> bookings = null;
         PageRequest page = new NormalizedPageRequest(from, size);
-        //var now = LocalDateTime.now().toInstant(ZoneOffset.UTC);
         var now = LocalDateTime.now();
-        //var now = Instant.now();
         switch (state) {
             case ALL:
                 bookings = bookingRepository.findAllByOwner(sharerId, page);

@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.error.exception.DataConflictException;
-import ru.practicum.shareit.error.exception.InvalidEntityException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserDtoMapper;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
@@ -35,9 +34,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto addUser(UserDto userDto) {
-        userDto.userCreationErrorMessage().ifPresent(message -> {
-            throw new InvalidEntityException(message);
-        });
         try {
             return UserDtoMapper.toDto(userRepository.save(UserDtoMapper.fromDto(userDto)));
         } catch (Exception e) {
@@ -66,9 +62,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void removeUser(Long id) {
-        System.out.println("removing user with id " + id);
         if (!userRepository.existsById(id)) {
-            System.out.println("user with id " + id + "not found, throwing");
             throw new UserNotFoundException(id);
         }
         userRepository.deleteById(id);

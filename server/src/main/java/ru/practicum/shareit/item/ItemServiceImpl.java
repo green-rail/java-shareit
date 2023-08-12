@@ -28,7 +28,6 @@ import ru.practicum.shareit.user.exception.UserNotFoundException;
 import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -120,11 +119,6 @@ public class ItemServiceImpl implements ItemService {
     private BookingDto[] findLastAndNextBooking(Item item) {
 
         List<Booking> bookings = bookingRepository.findByItemOrderByStartAsc(item);
-        System.out.println("---NOW from date time to inst: " + LocalDateTime.now().toInstant(ZoneOffset.UTC));
-        System.out.println("-----------NOW from date time: " + LocalDateTime.now());
-        bookings.forEach(b -> System.out.println(b.getStart()));
-        //Instant now = LocalDateTime.now().toInstant(ZoneOffset.UTC);
-        //Instant now = Instant.now();
         var now = LocalDateTime.now();
 
         BookingDto last = bookings.stream()
@@ -164,7 +158,6 @@ public class ItemServiceImpl implements ItemService {
         }
         var bookings = bookingRepository.findByBookerIdAndItemId(userId, itemId);
         boolean anyComplete = bookings.stream()
-                //.anyMatch(b -> b.getEnd().isBefore(LocalDateTime.now().toInstant(ZoneOffset.UTC)));
                 .anyMatch(b -> b.getEnd().isBefore(LocalDateTime.now()));
         if (!anyComplete) {
             throw new InvalidCommentAuthorException(

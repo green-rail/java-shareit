@@ -14,7 +14,6 @@ public class UserDto {
     @Email(message = "Некорректный email")
     private String email;
 
-    //@Pattern(regexp = "[a-zA-Z]+", message = "Имя не может быть пустым")
-    @Pattern(regexp = "[a-zA-Z]+", message = "NAME")
+    @Pattern(regexp = "[a-zA-Z]+", message = "Имя не может быть пустым")
     private String name;
 }

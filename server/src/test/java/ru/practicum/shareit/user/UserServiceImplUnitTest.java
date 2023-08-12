@@ -3,7 +3,6 @@ package ru.practicum.shareit.user;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import ru.practicum.shareit.error.exception.DataConflictException;
-import ru.practicum.shareit.error.exception.InvalidEntityException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 import ru.practicum.shareit.user.storage.UserRepository;
@@ -64,9 +63,6 @@ class UserServiceImplUnitTest {
 
         UserRepository userRepository = Mockito.mock(UserRepository.class);
         UserService userService = new UserServiceImpl(userRepository);
-
-        final UserDto dto = new UserDto(1L, null, "New user name");
-        assertThrows(InvalidEntityException.class, () -> userService.addUser(dto));
 
         UserDto validDto = new UserDto(user.getId(), user.getEmail(), user.getName());
 

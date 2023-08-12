@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.common.NormalizedPageRequest;
 import ru.practicum.shareit.error.exception.EntityNotFoundException;
-import ru.practicum.shareit.error.exception.InvalidEntityException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -35,9 +34,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public ItemRequestDto addRequest(Long userId, ItemRequestDto requestDto) {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException(userId);
-        }
-        if (requestDto.getDescription() == null || requestDto.getDescription().isBlank()) {
-            throw new InvalidEntityException("текст запроса не может быть пустым");
         }
         ItemRequest request = new ItemRequest();
         request.setRequesterId(userId);

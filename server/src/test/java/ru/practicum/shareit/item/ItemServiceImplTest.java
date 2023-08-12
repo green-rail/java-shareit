@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.error.exception.EntityNotFoundException;
-import ru.practicum.shareit.error.exception.InvalidEntityException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.exception.InvalidCommentAuthorException;
@@ -92,11 +91,6 @@ class ItemServiceImplTest {
 
     @Test
     void addItemFail() {
-        ItemDto invalidDto = new ItemDto(1L, "   ", "description",
-                true, null, null, null, 1L);
-
-        assertThrows(InvalidEntityException.class, () -> itemService.addItem(1L, invalidDto));
-
         ItemDto dto = new ItemDto(1L, "Item name", "description",
                 true, null, null, null, 1L);
         assertThrows(UserNotFoundException.class, () -> itemService.addItem(100L, dto));

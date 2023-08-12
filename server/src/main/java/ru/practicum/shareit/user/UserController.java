@@ -2,19 +2,16 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
 @Slf4j
-@Validated
 public class UserController {
 
     private final UserService userService;
@@ -32,7 +29,7 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto addUser(@Valid @RequestBody UserDto user, HttpServletRequest request) {
+    public UserDto addUser(@RequestBody UserDto user, HttpServletRequest request) {
         log.debug("On URL [{}] used method [{}]", request.getRequestURL(), request.getMethod());
         return userService.addUser(user);
     }

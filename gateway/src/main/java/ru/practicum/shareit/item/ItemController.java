@@ -25,22 +25,28 @@ public class ItemController {
     private final ItemClient itemClient;
 
     @PostMapping
-    public ResponseEntity<Object> addItem(@RequestHeader(X_SHARER_HEADER_NAME) long userId,
+    public ResponseEntity<Object> addItem(@RequestHeader(X_SHARER_HEADER_NAME) @PositiveOrZero long userId,
                                           @RequestBody @Valid ItemDto itemDto) {
         log.info("Add item item={}, userId={}", itemDto, userId);
+        if (!itemDto.canCreate()) {
+            throw new IllegalArgumentException();
+        }
         return itemClient.addItem(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
-    public ResponseEntity<Object> updateItem(@RequestHeader(X_SHARER_HEADER_NAME) long userId,
+    public ResponseEntity<Object> updateItem(@RequestHeader(X_SHARER_HEADER_NAME) @PositiveOrZero long userId,
                                              @RequestBody @Valid ItemDto itemDto,
                                              @PathVariable long itemId) {
         log.info("Update item item={}, userId={}, itemId={}", itemDto, userId, itemId);
+        if (!itemDto.canUpdate()) {
+            throw new IllegalArgumentException();
+        }
         return itemClient.updateItem(userId, itemDto, itemId);
     }
 
     @GetMapping("/{itemId}")
-    public ResponseEntity<Object> getItem(@RequestHeader(X_SHARER_HEADER_NAME) Long userId,
+    public ResponseEntity<Object> getItem(@RequestHeader(X_SHARER_HEADER_NAME) @PositiveOrZero Long userId,
                                           @PathVariable @PositiveOrZero long itemId) {
 
         log.info("Get item userId={}, itemId={}", userId, itemId);
@@ -48,7 +54,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> getItemsForSharer(@RequestHeader(X_SHARER_HEADER_NAME) long userId,
+    public ResponseEntity<Object> getItemsForSharer(@RequestHeader(X_SHARER_HEADER_NAME) @PositiveOrZero long userId,
                                                     @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
                                                     @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
         log.info("Get items for sharer  userId={}, from={}, size={}", userId, from, size);
@@ -57,7 +63,7 @@ public class ItemController {
 
 
     @GetMapping("/search")
-    public ResponseEntity<Object> searchItem(@RequestHeader(X_SHARER_HEADER_NAME) long userId,
+    public ResponseEntity<Object> searchItem(@RequestHeader(X_SHARER_HEADER_NAME) @PositiveOrZero long userId,
                                              @RequestParam String text,
                                              @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
                                              @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
@@ -66,7 +72,7 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public ResponseEntity<Object> addComment(@RequestHeader(X_SHARER_HEADER_NAME) long userId,
+    public ResponseEntity<Object> addComment(@RequestHeader(X_SHARER_HEADER_NAME) @PositiveOrZero long userId,
                                              @PathVariable @PositiveOrZero long itemId,
                                              @Valid @RequestBody CommentDto comment) {
 

@@ -35,6 +35,9 @@ public class UserController {
     @PostMapping
     public ResponseEntity<Object> addUser(@Valid @RequestBody UserDto user) {
         log.info("Add user user={}", user);
+        if (user.getEmail() == null) {
+            throw new IllegalArgumentException("Отсутствует email");
+        }
         return userClient.addUser(user);
     }
 

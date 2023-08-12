@@ -25,7 +25,7 @@ public class ItemRequestController {
     private final ItemRequestClient requestClient;
 
     @PostMapping
-    public ResponseEntity<Object> addRequest(@RequestHeader(X_SHARER_HEADER_NAME) long userId,
+    public ResponseEntity<Object> addRequest(@RequestHeader(X_SHARER_HEADER_NAME) @PositiveOrZero long userId,
                                              @Valid @RequestBody ItemRequestDto requestDto) {
 
         log.info("Add request userId={}, request={}", userId, requestDto);
@@ -33,14 +33,14 @@ public class ItemRequestController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> getUserRequests(@RequestHeader(X_SHARER_HEADER_NAME) long userId) {
+    public ResponseEntity<Object> getUserRequests(@RequestHeader(X_SHARER_HEADER_NAME) @PositiveOrZero long userId) {
 
         log.info("Get user requests userId={}", userId);
         return requestClient.getUserRequests(userId);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Object> getAllRequests(@RequestHeader(X_SHARER_HEADER_NAME) long userId,
+    public ResponseEntity<Object> getAllRequests(@RequestHeader(X_SHARER_HEADER_NAME) @PositiveOrZero long userId,
                                                  @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
                                                  @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
 
@@ -49,7 +49,7 @@ public class ItemRequestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getRequest(@RequestHeader(X_SHARER_HEADER_NAME) long userId,
+    public ResponseEntity<Object> getRequest(@RequestHeader(X_SHARER_HEADER_NAME) @PositiveOrZero long userId,
                                              @PathVariable @PositiveOrZero long id) {
 
         log.info("Get request userId={}, id={}", userId, id);

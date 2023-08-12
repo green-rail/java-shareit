@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.error.exception.EntityNotFoundException;
-import ru.practicum.shareit.error.exception.InvalidEntityException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.User;
@@ -54,8 +53,6 @@ public class ItemRequestServiceImplTest {
 
         var requestDto = new ItemRequestDto();
         assertThrows(UserNotFoundException.class, () -> service.addRequest(100L, requestDto));
-        requestDto.setDescription("   ");
-        assertThrows(InvalidEntityException.class, () -> service.addRequest(user1.getId(), requestDto));
 
         String requestText = "Test request";
         requestDto.setDescription(requestText);

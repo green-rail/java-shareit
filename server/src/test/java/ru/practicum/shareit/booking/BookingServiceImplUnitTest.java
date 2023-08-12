@@ -116,7 +116,6 @@ class BookingServiceImplUnitTest {
 
         bookingDto.setStart(null);
         Mockito.when(userRepository.findById(anyLong())).thenReturn(Optional.of(booker));
-        assertThrows(InvalidEntityException.class, () -> bookingService.addBooking(booker.getId(), bookingDto));
 
         bookingDto.setStart(LocalDateTime.now().plusSeconds(100));
         bookingDto.setEnd(LocalDateTime.now().plusSeconds(1000));
