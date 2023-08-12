@@ -112,6 +112,7 @@ public class ItemServiceImpl implements ItemService {
                     .collect(Collectors.toUnmodifiableList());
             result.add(ItemDtoMapper.toDto(item, comments, bookings[0], bookings[1]));
         }
+        result.sort(Comparator.comparing(ItemDto::getId));
         return result;
     }
 
