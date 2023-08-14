@@ -129,7 +129,6 @@ class BookingServiceImplTest {
         Booking booking = new Booking();
         booking.setItem(itemMadeByUser2);
         booking.setBooker(user1);
-        //var now = LocalDateTime.now().toInstant(ZoneOffset.UTC);
         var now = LocalDateTime.now();
         booking.setStart(now.plusSeconds(100));
         booking.setEnd(now.plusSeconds(10000));

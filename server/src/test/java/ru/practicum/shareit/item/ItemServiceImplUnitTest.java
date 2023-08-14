@@ -73,8 +73,6 @@ class ItemServiceImplUnitTest {
 
     private final Booking lastBooking = new Booking(
             1L,
-            //LocalDateTime.now().toInstant(ZoneOffset.UTC).minusSeconds(1000),
-            //LocalDateTime.now().toInstant(ZoneOffset.UTC).minusSeconds(500),
             LocalDateTime.now().minusSeconds(1000),
             LocalDateTime.now().minusSeconds(500),
             item,
@@ -84,8 +82,6 @@ class ItemServiceImplUnitTest {
 
     private final Booking nextBooking = new Booking(
             2L,
-            //LocalDateTime.now().toInstant(ZoneOffset.UTC).plusSeconds(500),
-            //LocalDateTime.now().toInstant(ZoneOffset.UTC).plusSeconds(1000),
             LocalDateTime.now().plusSeconds(500),
             LocalDateTime.now().plusSeconds(1000),
             item,

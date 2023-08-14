@@ -55,8 +55,6 @@ class BookingServiceImplUnitTest {
                 1L,
                 1L,
                 1L,
-                //Instant.now(),
-                //Instant.now(),
                 LocalDateTime.now(),
                 LocalDateTime.now(),
                 BookingStatus.WAITING,
@@ -109,7 +107,6 @@ class BookingServiceImplUnitTest {
         Mockito.when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         assertThrows(ItemUnavailableException.class, () -> bookingService.addBooking(booker.getId(), bookingDto));
 
-
         item.setAvailable(true);
         Mockito.when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner));
         assertThrows(EntityNotFoundException.class, () -> bookingService.addBooking(owner.getId(), bookingDto));
@@ -119,7 +116,6 @@ class BookingServiceImplUnitTest {
 
         bookingDto.setStart(LocalDateTime.now().plusSeconds(100));
         bookingDto.setEnd(LocalDateTime.now().plusSeconds(1000));
-
 
         Mockito.when(bookingRepository.save(any())).thenReturn(booking);
         BookingDto response = bookingService.addBooking(booker.getId(), bookingDto);

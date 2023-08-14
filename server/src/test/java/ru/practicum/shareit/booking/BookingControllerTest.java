@@ -37,8 +37,6 @@ class BookingControllerTest {
             1L,
             1L,
             1L,
-            //Instant.now(),
-            //Instant.now().plusSeconds(1000),
             LocalDateTime.now(),
             LocalDateTime.now().plusSeconds(1000),
             BookingStatus.WAITING,

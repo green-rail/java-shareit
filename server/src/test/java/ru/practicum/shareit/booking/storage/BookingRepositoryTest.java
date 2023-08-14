@@ -77,8 +77,6 @@ class BookingRepositoryTest {
         bookingUser2PastApproved = new Booking();
         bookingUser2PastApproved.setItem(itemOwnedByUser1);
         bookingUser2PastApproved.setBooker(user2);
-        //bookingUser2PastApproved.setStart(Instant.now().minusSeconds(10_000));
-        //bookingUser2PastApproved.setEnd(Instant.now().minusSeconds(9_000));
         bookingUser2PastApproved.setStart(LocalDateTime.now().minusSeconds(10_000));
         bookingUser2PastApproved.setEnd(LocalDateTime.now().minusSeconds(9_000));
         bookingUser2PastApproved.setStatus(BookingStatus.APPROVED);
@@ -149,7 +147,6 @@ class BookingRepositoryTest {
     void findByBookerIdAndStartBeforeAndEndAfterOrderByEndDesc() {
         Page<Booking> response = repository
                 .findByBookerIdAndStartBeforeAndEndAfter(
-                        //user2.getId(), Instant.now(), Instant.now(),
                         user2.getId(), LocalDateTime.now(), LocalDateTime.now(),
                         page.withSort(Sort.by(Sort.Direction.DESC, "end")));
         assertThat(response.getTotalElements(), equalTo(2L));

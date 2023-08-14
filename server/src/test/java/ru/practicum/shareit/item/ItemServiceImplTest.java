@@ -70,7 +70,6 @@ class ItemServiceImplTest {
         comment.setAuthor(user1);
         em.persist(comment);
 
-        //Instant now = LocalDateTime.now().toInstant(ZoneOffset.UTC);
         LocalDateTime now = LocalDateTime.now();
         lastBooking = new Booking();
         lastBooking.setItem(item);

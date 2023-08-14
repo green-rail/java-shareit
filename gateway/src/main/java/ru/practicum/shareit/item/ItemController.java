@@ -25,7 +25,7 @@ public class ItemController {
     private final ItemClient itemClient;
 
     @PostMapping
-    public ResponseEntity<Object> addItem(@RequestHeader(X_SHARER_HEADER_NAME) @PositiveOrZero long userId,
+    public ResponseEntity<Object> addItem(@RequestHeader(X_SHARER_HEADER_NAME) @Positive long userId,
                                           @RequestBody @Valid ItemDto itemDto) {
         log.info("Add item item={}, userId={}", itemDto, userId);
         if (!itemDto.canCreate()) {
@@ -35,7 +35,7 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ResponseEntity<Object> updateItem(@RequestHeader(X_SHARER_HEADER_NAME) @PositiveOrZero long userId,
+    public ResponseEntity<Object> updateItem(@RequestHeader(X_SHARER_HEADER_NAME) @Positive long userId,
                                              @RequestBody @Valid ItemDto itemDto,
                                              @PathVariable long itemId) {
         log.info("Update item item={}, userId={}, itemId={}", itemDto, userId, itemId);
@@ -46,34 +46,34 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ResponseEntity<Object> getItem(@RequestHeader(X_SHARER_HEADER_NAME) @PositiveOrZero Long userId,
-                                          @PathVariable @PositiveOrZero long itemId) {
+    public ResponseEntity<Object> getItem(@RequestHeader(X_SHARER_HEADER_NAME) @Positive Long userId,
+                                          @PathVariable @Positive long itemId) {
 
         log.info("Get item userId={}, itemId={}", userId, itemId);
         return itemClient.getItem(userId, itemId);
     }
 
     @GetMapping
-    public ResponseEntity<Object> getItemsForSharer(@RequestHeader(X_SHARER_HEADER_NAME) @PositiveOrZero long userId,
-                                                    @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-                                                    @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
+    public ResponseEntity<Object> getItemsForSharer(@RequestHeader(X_SHARER_HEADER_NAME) @Positive long userId,
+                                                    @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                                    @Positive @RequestParam(defaultValue = "10") Integer size) {
         log.info("Get items for sharer  userId={}, from={}, size={}", userId, from, size);
         return itemClient.getAllForSharer(userId, from, size);
     }
 
 
     @GetMapping("/search")
-    public ResponseEntity<Object> searchItem(@RequestHeader(X_SHARER_HEADER_NAME) @PositiveOrZero long userId,
+    public ResponseEntity<Object> searchItem(@RequestHeader(X_SHARER_HEADER_NAME) @Positive long userId,
                                              @RequestParam String text,
-                                             @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-                                             @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
+                                             @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                             @Positive @RequestParam(defaultValue = "10") Integer size) {
         log.info("Search  text={}, from={}, size={}", text, from, size);
         return itemClient.search(userId, text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")
-    public ResponseEntity<Object> addComment(@RequestHeader(X_SHARER_HEADER_NAME) @PositiveOrZero long userId,
-                                             @PathVariable @PositiveOrZero long itemId,
+    public ResponseEntity<Object> addComment(@RequestHeader(X_SHARER_HEADER_NAME) @Positive long userId,
+                                             @PathVariable @Positive long itemId,
                                              @Valid @RequestBody CommentDto comment) {
 
         log.info("Add comment userId={}, itemId={}, comment={}", userId, itemId, comment);

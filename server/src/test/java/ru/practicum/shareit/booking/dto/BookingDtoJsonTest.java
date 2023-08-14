@@ -30,7 +30,6 @@ class BookingDtoJsonTest {
         var formatter = DateTimeFormatter
                 .ofPattern(defaultJsonDateTimePattern)
                 .withZone(ZoneOffset.UTC);
-        //var now = Instant.now();
         var now = LocalDateTime.now();
 
         BookingDto dto = new BookingDto(
@@ -49,10 +48,6 @@ class BookingDtoJsonTest {
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(1);
         assertThat(result).extractingJsonPathNumberValue("$.itemId").isEqualTo(1);
         assertThat(result).extractingJsonPathNumberValue("$.bookerId").isEqualTo(1);
-        //assertThat(result).extractingJsonPathStringValue("$.start")
-        //        .isEqualTo(formatter.format(now));
-        //assertThat(result).extractingJsonPathStringValue("$.end")
-        //        .isEqualTo(formatter.format(now));
         assertThat(result).extractingJsonPathStringValue("$.status")
                 .isEqualTo(dto.getStatus().toString());
         assertThat(result).extractingJsonPathValue("$.item").isNotNull();
